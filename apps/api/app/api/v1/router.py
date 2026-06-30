@@ -1,7 +1,8 @@
-"""API v1 router — funnel-only (admin + public + webhooks)."""
+"""API v1 router — funnel-only (admin + public + webhooks + health)."""
 
 from fastapi import APIRouter
 
+from app.api.v1.endpoints import health as health_endpoint
 from app.api.v1.endpoints.admin import auth as admin_auth
 from app.api.v1.endpoints.admin import (
     discounts as admin_discounts,
@@ -32,6 +33,9 @@ from app.api.v1.endpoints.public import (
 from app.api.v1.endpoints import webhooks as sepay_webhook
 
 api_router = APIRouter()
+
+# --- Health (no auth, no prefix — resolves to /api/v1/health) ---
+api_router.include_router(health_endpoint.router, prefix="/health", tags=["Health"])
 
 # --- Admin (require_role admin JWT) ---
 api_router.include_router(admin_auth.router, prefix="/admin/auth", tags=["Admin Auth"])
