@@ -1,0 +1,13 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "apps/api/Dockerfile"
+
+[deploy]
+# startCommand overrides entrypoint.sh; Railway injects $PORT at runtime.
+# preDeployCommand runs once after build, before the new replica goes live.
+preDeployCommand = ["alembic upgrade head"]
+startCommand = "uvicorn main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/api/v1/health"
+restartPolicyType = "ON_FAILURE"
+# Only rebuild when api source or shared packages change.
+watchPatterns = ["apps/api/**"]
