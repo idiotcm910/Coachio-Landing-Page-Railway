@@ -1,0 +1,14 @@
+{
+  "name": "design-system",
+  "root": "packages/design-system",
+  "projectType": "library",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/design-system",
+        "command": "tsc --noEmit -p tsconfig.json"
+      }
+    }
+  }
+}

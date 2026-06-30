@@ -1,0 +1,85 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: var(--coachio-admin-dashboard-surface);
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-md);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 12rem;
+}
+
+.fieldNarrow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 8rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--coachio-admin-dashboard-text-muted);
+}
+
+.input {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--coachio-admin-dashboard-text);
+  background: var(--coachio-admin-dashboard-bg);
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+
+  &:focus-visible {
+    outline: 2px solid var(--coachio-admin-dashboard-accent);
+    outline-offset: 1px;
+  }
+}
+
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  font-size: 0.875rem;
+  color: var(--coachio-admin-dashboard-text);
+  cursor: pointer;
+}
+
+.reset {
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: var(--coachio-admin-dashboard-text);
+  background: var(--coachio-admin-dashboard-surface);
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--coachio-admin-dashboard-surface-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--coachio-admin-dashboard-accent);
+    outline-offset: 1px;
+  }
+}
+
+.count {
+  margin-left: auto;
+  align-self: center;
+  font-size: 0.8125rem;
+  color: var(--coachio-admin-dashboard-text-muted);
+  font-variant-numeric: tabular-nums;
+}

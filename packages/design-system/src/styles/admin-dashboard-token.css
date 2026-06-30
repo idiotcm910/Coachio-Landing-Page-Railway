@@ -1,0 +1,48 @@
+:root {
+  --coachio-admin-dashboard-bg: #f9fafb;
+  --coachio-admin-dashboard-surface: #ffffff;
+  --coachio-admin-dashboard-surface-muted: #f9fafb;
+  --coachio-admin-dashboard-surface-hover: #f3f4f6;
+  --coachio-admin-dashboard-border: #e5e7eb;
+  --coachio-admin-dashboard-border-subtle: #f3f4f6;
+
+  --coachio-admin-dashboard-text: #111827;
+  --coachio-admin-dashboard-text-muted: #6b7280;
+  --coachio-admin-dashboard-text-soft: #9ca3af;
+  --coachio-admin-dashboard-text-inverse: #ffffff;
+
+  --coachio-admin-dashboard-accent: #f67d1c;
+  --coachio-admin-dashboard-accent-hover: #ea580c;
+  --coachio-admin-dashboard-accent-soft: #fff7ed;
+
+  --coachio-admin-dashboard-success-bg: #dcfce7;
+  --coachio-admin-dashboard-success-text: #16a34a;
+  --coachio-admin-dashboard-success-border: #bbf7d0;
+
+  --coachio-admin-dashboard-warning-bg: #fef3c7;
+  --coachio-admin-dashboard-warning-text: #ca8a04;
+  --coachio-admin-dashboard-warning-border: #fde68a;
+
+  --coachio-admin-dashboard-danger-bg: #fee2e2;
+  --coachio-admin-dashboard-danger-text: #dc2626;
+  --coachio-admin-dashboard-danger-border: #fecaca;
+
+  --coachio-admin-dashboard-info-bg: #dbeafe;
+  --coachio-admin-dashboard-info-text: #2563eb;
+  --coachio-admin-dashboard-info-border: #bfdbfe;
+
+  --coachio-admin-dashboard-neutral-bg: #f3f4f6;
+  --coachio-admin-dashboard-neutral-text: #4b5563;
+  --coachio-admin-dashboard-neutral-border: #e5e7eb;
+
+  --coachio-admin-dashboard-radius-sm: 0.5rem;
+  --coachio-admin-dashboard-radius-md: 0.75rem;
+  --coachio-admin-dashboard-radius-lg: 1.5rem;
+
+  --coachio-admin-dashboard-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --coachio-admin-dashboard-shadow-md: 0 4px 12px rgb(15 23 42 / 0.08);
+  --coachio-admin-dashboard-shadow-modal: 0 24px 64px rgb(15 23 42 / 0.24);
+
+  --coachio-admin-dashboard-sidebar-width: 16rem;
+  --coachio-admin-dashboard-content-padding: 2rem;
+}

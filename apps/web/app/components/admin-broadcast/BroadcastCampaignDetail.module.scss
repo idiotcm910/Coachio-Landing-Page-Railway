@@ -1,0 +1,298 @@
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.errorBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--coachio-admin-dashboard-danger-border, #fca5a5);
+  border-radius: var(--coachio-admin-dashboard-radius-md);
+  background: var(--coachio-admin-dashboard-danger-bg, #fee2e2);
+  color: var(--coachio-admin-dashboard-danger-text, #dc2626);
+}
+
+.bannerIcon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.bannerTitle {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  margin-bottom: 0.125rem;
+}
+
+.bannerMsg {
+  font-size: 0.8125rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-md);
+  background: var(--coachio-admin-dashboard-surface-muted);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cardSuccess {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+
+  .cardValue { color: #166534; }
+}
+
+.cardDanger {
+  border-color: #fca5a5;
+  background: #fff1f2;
+
+  .cardValue { color: #991b1b; }
+}
+
+.cardLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--coachio-admin-dashboard-text-soft);
+}
+
+.cardValue {
+  font-size: 1.375rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--coachio-admin-dashboard-text);
+}
+
+.statsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--coachio-admin-dashboard-text);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.liveIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--coachio-admin-dashboard-text-muted);
+}
+
+.liveDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.refreshBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  color: var(--coachio-admin-dashboard-text-muted);
+  background: transparent;
+  cursor: pointer;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:not(:disabled):hover { background: var(--coachio-admin-dashboard-surface-hover); }
+}
+
+.retryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  background: #fff1f2;
+  cursor: pointer;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:not(:disabled):hover { background: #fee2e2; }
+}
+
+.statsError {
+  font-size: 0.8125rem;
+  color: var(--coachio-admin-dashboard-danger-text, #dc2626);
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-md);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+
+  th {
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--coachio-admin-dashboard-text-soft);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--coachio-admin-dashboard-border);
+    background: var(--coachio-admin-dashboard-surface-muted);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--coachio-admin-dashboard-border-subtle, var(--coachio-admin-dashboard-border));
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--coachio-admin-dashboard-surface-hover); }
+}
+
+.email {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.jobError {
+  color: var(--coachio-admin-dashboard-danger-text, #dc2626);
+  font-size: 0.75rem;
+  word-break: break-word;
+}
+
+.attempts {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.pageBtn {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+  color: var(--coachio-admin-dashboard-text-muted);
+  background: transparent;
+  cursor: pointer;
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:not(:disabled):hover { background: var(--coachio-admin-dashboard-surface-hover); }
+}
+
+.pageInfo {
+  font-size: 0.8125rem;
+  color: var(--coachio-admin-dashboard-text-muted);
+}
+
+.noFailed {
+  font-size: 0.875rem;
+  color: var(--coachio-admin-dashboard-text-muted);
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.spin {
+  @extend .icon;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.progressWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.progressHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.progressLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--coachio-admin-dashboard-text-soft);
+}
+
+.progressValue {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--coachio-admin-dashboard-text);
+}
+
+.progressTrack {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--coachio-admin-dashboard-surface-muted);
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--coachio-admin-dashboard-accent, #6366f1);
+  transition: width 0.4s ease;
+}

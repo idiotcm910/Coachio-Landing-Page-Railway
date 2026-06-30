@@ -1,0 +1,34 @@
+{
+  "name": "api",
+  "root": "apps/api",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "command": "uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+      "options": { "cwd": "apps/api" }
+    },
+    "test": {
+      "command": "pytest",
+      "options": { "cwd": "apps/api" },
+      "cache": true
+    },
+    "lint": {
+      "command": "flake8 app tests",
+      "options": { "cwd": "apps/api" },
+      "cache": true
+    },
+    "format": {
+      "command": "black app tests",
+      "options": { "cwd": "apps/api" }
+    },
+    "typecheck": {
+      "command": "mypy app",
+      "options": { "cwd": "apps/api" },
+      "cache": true
+    },
+    "migrate": {
+      "command": "alembic upgrade head",
+      "options": { "cwd": "apps/api" }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "coachio-landing-page",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "nx": "NX_DAEMON=false nx",
+    "graph": "NX_DAEMON=false nx graph",
+    "dev:api": "NX_DAEMON=false nx run api:serve",
+    "dev:web": "NX_DAEMON=false nx run web:dev",
+    "typecheck": "NX_DAEMON=false nx run-many -t typecheck",
+    "api:serve": "NX_DAEMON=false nx run api:serve",
+    "api:test": "NX_DAEMON=false nx run api:test",
+    "api:lint": "NX_DAEMON=false nx run api:lint",
+    "api:typecheck": "NX_DAEMON=false nx run api:typecheck",
+    "api:migrate": "NX_DAEMON=false nx run api:migrate",
+    "web:dev": "NX_DAEMON=false nx run web:dev",
+    "web:build": "NX_DAEMON=false nx run web:build",
+    "api-client:typecheck": "NX_DAEMON=false nx run api-client:typecheck",
+    "design-system:typecheck": "NX_DAEMON=false nx run design-system:typecheck",
+    "affected:build": "NX_DAEMON=false nx affected -t build",
+    "affected:typecheck": "NX_DAEMON=false nx affected -t typecheck"
+  },
+  "devDependencies": {
+    "@nx/next": "22.7.1",
+    "nx": "22.7.1"
+  }
+}

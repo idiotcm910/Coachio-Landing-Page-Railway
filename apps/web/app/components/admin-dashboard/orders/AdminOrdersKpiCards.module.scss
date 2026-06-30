@@ -1,0 +1,58 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  background: var(--coachio-admin-dashboard-surface);
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-lg);
+  box-shadow: var(--coachio-admin-dashboard-shadow-sm);
+}
+
+.label {
+  font-size: 0.8125rem;
+  color: var(--coachio-admin-dashboard-text-muted);
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--coachio-admin-dashboard-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.skeleton {
+  height: 1.75rem;
+  width: 60%;
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+  background: var(--coachio-admin-dashboard-surface-muted);
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}

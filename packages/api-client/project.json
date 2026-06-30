@@ -1,0 +1,14 @@
+{
+  "name": "api-client",
+  "root": "packages/api-client",
+  "projectType": "library",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/api-client",
+        "command": "tsc --noEmit -p tsconfig.json"
+      }
+    }
+  }
+}

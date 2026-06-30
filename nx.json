@@ -1,0 +1,42 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/*.spec.ts",
+      "!{projectRoot}/**/*.test.ts",
+      "!{projectRoot}/**/*.spec.tsx",
+      "!{projectRoot}/**/*.test.tsx",
+      "!{projectRoot}/.next/cache/**/*",
+      "!{projectRoot}/tsconfig.tsbuildinfo"
+    ],
+    "sharedGlobals": [
+      { "runtime": "node --version" },
+      { "runtime": "python --version" },
+      { "env": "NEXT_PUBLIC_API_URL" }
+    ]
+  },
+  "targetDefaults": {
+    "build": { "cache": true, "inputs": ["production", "^production"] },
+    "test": { "cache": true, "inputs": ["default", "^production"] },
+    "lint": { "cache": true, "inputs": ["default", "^production"] },
+    "typecheck": { "cache": true, "inputs": ["default", "^production"] },
+    "serve": { "cache": false },
+    "dev": { "cache": false },
+    "start": { "cache": false },
+    "migrate": { "cache": false }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/next/plugin",
+      "options": {
+        "startTargetName": "start",
+        "buildTargetName": "build",
+        "devTargetName": "dev",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  ],
+  "analytics": false
+}

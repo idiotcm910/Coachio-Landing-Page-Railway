@@ -1,0 +1,15 @@
+**/node_modules
+**/.next
+**/dist
+**/__pycache__
+**/.venv
+**/venv
+**/backend_env
+.git
+.gitignore
+**/.env
+**/.env.local
+!**/.env.example
+**/*.log
+.DS_Store
+apps/api

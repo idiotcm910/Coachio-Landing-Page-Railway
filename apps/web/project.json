@@ -1,0 +1,12 @@
+{
+  "name": "web",
+  "root": "apps/web",
+  "projectType": "application",
+  "targets": {
+    "build":     { "command": "next build", "options": { "cwd": "apps/web" } },
+    "dev":       { "command": "next dev -p 3100", "options": { "cwd": "apps/web" } },
+    "typecheck": { "command": "tsc --noEmit", "options": { "cwd": "apps/web" } },
+    "lint":      { "command": "next lint", "options": { "cwd": "apps/web" } },
+    "test":      { "command": "vitest run", "options": { "cwd": "apps/web" } }
+  }
+}

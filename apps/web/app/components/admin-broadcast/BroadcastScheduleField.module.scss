@@ -1,0 +1,56 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--coachio-admin-dashboard-text-soft);
+}
+
+.radioGroup {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--coachio-admin-dashboard-text);
+  cursor: pointer;
+
+  input[type='radio'] {
+    accent-color: var(--coachio-admin-dashboard-accent);
+  }
+}
+
+.dateRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.input {
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+  background: var(--coachio-admin-dashboard-surface-muted);
+  color: var(--coachio-admin-dashboard-text);
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  width: 100%;
+  max-width: 280px;
+
+  &:focus {
+    border-color: var(--coachio-admin-dashboard-accent);
+  }
+}
+
+.error {
+  font-size: 0.75rem;
+  color: var(--coachio-admin-dashboard-danger-text, #dc2626);
+}

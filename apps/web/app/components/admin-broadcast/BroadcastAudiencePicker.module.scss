@@ -1,0 +1,159 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--coachio-admin-dashboard-text-soft);
+}
+
+.fixedFunnel {
+  font-size: 0.875rem;
+  color: var(--coachio-admin-dashboard-text);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+  background: var(--coachio-admin-dashboard-surface-muted);
+}
+
+.funnelList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+  padding: 0.5rem 0.75rem;
+  background: var(--coachio-admin-dashboard-surface-muted);
+}
+
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--coachio-admin-dashboard-text);
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    accent-color: var(--coachio-admin-dashboard-accent);
+  }
+}
+
+.empty {
+  font-size: 0.875rem;
+  color: var(--coachio-admin-dashboard-text-muted);
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.filterField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filterLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--coachio-admin-dashboard-text-muted);
+}
+
+.select,
+.input {
+  border: 1px solid var(--coachio-admin-dashboard-border);
+  border-radius: var(--coachio-admin-dashboard-radius-sm);
+  background: var(--coachio-admin-dashboard-surface-muted);
+  color: var(--coachio-admin-dashboard-text);
+  font-size: 0.8125rem;
+  padding: 0.375rem 0.5rem;
+  outline: none;
+  width: 100%;
+
+  &:focus {
+    border-color: var(--coachio-admin-dashboard-accent);
+  }
+}
+
+.countRow {
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.counting {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--coachio-admin-dashboard-text-muted);
+}
+
+.count {
+  font-size: 0.875rem;
+  color: var(--coachio-admin-dashboard-text);
+
+  strong {
+    color: var(--coachio-admin-dashboard-accent);
+  }
+}
+
+.spin {
+  width: 0.875rem;
+  height: 0.875rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.filterLabelRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.helpBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--coachio-admin-dashboard-text-muted);
+  transition: color 0.15s ease;
+
+  &:hover { color: var(--coachio-admin-dashboard-accent, #6366f1); }
+}
+
+.helpIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.helpModalBody {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--coachio-admin-dashboard-text-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  strong { color: var(--coachio-admin-dashboard-text); font-weight: 700; }
+}

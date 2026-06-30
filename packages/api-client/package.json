@@ -1,0 +1,43 @@
+{
+  "name": "@coachio/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./auth": "./src/auth/index.ts",
+    "./http": "./src/http/index.ts",
+    "./storage": "./src/storage/index.ts",
+    "./types": "./src/types/index.ts",
+    "./funnels": "./src/funnels/index.ts",
+    "./admin-funnels": "./src/admin-funnels/index.ts",
+    "./admin-funnel-orders": "./src/admin-funnel-orders/index.ts",
+    "./funnel-revenue-analytics": "./src/funnel-revenue-analytics/index.ts",
+    "./media": "./src/media/index.ts",
+    "./admin-broadcasts": "./src/admin-broadcasts/index.ts",
+    "./lucky-events": "./src/lucky-events/index.ts",
+    "./admin-gifts": "./src/admin-gifts/index.ts",
+    "./admin-url-redirects": "./src/admin-url-redirects/index.ts",
+    "./admin-site-homepage": "./src/admin-site-homepage/index.ts"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "dependencies": {
+    "query-string": "9.3.1"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "~5.8.2",
+    "vitest": "^4.1.6"
+  }
+}
