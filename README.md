@@ -1,6 +1,9 @@
 # Coachio Landing Page
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/CHANGE_ME)
+
 > 🇻🇳 Tài liệu tiếng Việt: [README.vi.md](./README.vi.md)
+> This repo is a Railway-optimised downstream of [coachio-landing-page](https://github.com/sonlovinbot/coachio-landing-page).
 
 Open-source funnel & landing-page platform: build landing pages, capture leads,
 sell digital products with SePay/VietQR checkout, send transactional + broadcast
@@ -93,6 +96,12 @@ Other nx targets: `nx run api:test`, `nx run api:lint`, `nx run api:typecheck`,
 End-to-end verification runbook lives in
 `docs/smoke-test.md` (admin → funnel → publish → lead → checkout → SePay webhook →
 receipt email → gift → lucky-draw → broadcast → discount).
+
+## Deploy lên Railway
+
+One-click deploy: api (FastAPI) + web (Next.js) + Postgres + Redis — see [`docs/railway-template.md`](./docs/railway-template.md) for the full env-var wiring table, pre-deploy migration notes, and the marketplace publish checklist.
+
+> The badge link above uses `CHANGE_ME` — update it with your template ID after publishing on the Railway dashboard.
 
 ## License
 

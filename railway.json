@@ -1,0 +1,41 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "services": [
+    {
+      "name": "api",
+      "icon": "https://res.cloudinary.com/railwayapp/image/upload/v1672175304/templates/fastapi.png",
+      "repo": ".",
+      "buildCommand": "docker build -f apps/api/Dockerfile .",
+      "startCommand": "uvicorn main:app --host 0.0.0.0 --port $PORT",
+      "rootDirectory": "/",
+      "variables": {
+        "DATABASE_URL": "${{Postgres.DATABASE_URL}}",
+        "REDIS_URL": "${{Redis.REDIS_URL}}",
+        "SECRET_KEY": "${{secret(32)}}",
+        "FRONTEND_URL": "https://${{web.RAILWAY_PUBLIC_DOMAIN}}",
+        "NEXT_PUBLIC_BACKEND_URL": "https://${{api.RAILWAY_PUBLIC_DOMAIN}}"
+      }
+    },
+    {
+      "name": "web",
+      "repo": ".",
+      "buildCommand": "docker build -f apps/web/Dockerfile .",
+      "startCommand": "node apps/web/server.js",
+      "rootDirectory": "/",
+      "variables": {
+        "API_INTERNAL_URL": "http://${{api.RAILWAY_PRIVATE_DOMAIN}}",
+        "NEXT_PUBLIC_BACKEND_URL": "https://${{api.RAILWAY_PUBLIC_DOMAIN}}"
+      }
+    }
+  ],
+  "plugins": [
+    {
+      "name": "Postgres",
+      "image": "postgres:16"
+    },
+    {
+      "name": "Redis",
+      "image": "redis:7-alpine"
+    }
+  ]
+}

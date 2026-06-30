@@ -1,0 +1,12 @@
+[build]
+builder = "DOCKERFILE"
+# Build context must be repo root (pnpm workspace packages resolution).
+dockerfilePath = "apps/web/Dockerfile"
+
+[deploy]
+# Dockerfile sets ENV HOSTNAME=0.0.0.0 PORT=3000; Railway overrides PORT at runtime.
+# server.js path is relative to WORKDIR /app set in the runner stage.
+startCommand = "node apps/web/server.js"
+healthcheckPath = "/api/health"
+# Rebuild on web source, shared packages, or lockfile changes.
+watchPatterns = ["apps/web/**", "packages/**", "pnpm-lock.yaml"]
