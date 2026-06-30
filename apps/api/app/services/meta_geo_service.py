@@ -2,8 +2,9 @@
 
 Behaviour:
 - Returns None (silently) when: no IP, no IPINFO_TOKEN, private/loopback/reserved IP,
-  or any network/parse/Redis error.
-- Redis-caches the parsed 4-key result per IP for ~30 days to limit API usage.
+  or any network/parse/cache error.
+- Caches the parsed 4-key result per IP in the in-process cache for ~30 days to
+  limit API usage (best-effort; cache miss is silently tolerated).
 - Result dict keys: ct (city), st (region), zp (postal), country.  Missing keys are
   omitted so callers can add them without extra None-guards.
 - NEVER raises — every code path ends with return None on failure.
@@ -16,7 +17,7 @@ from typing import Optional
 import httpx
 
 from app.core.config import settings
-from app.core.redis_client import get_redis_client
+from app.core.cache import get_backend
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ def lookup_geo(ip: Optional[str]) -> Optional[dict]:
     """Return geo dict {ct, st, zp, country} for a public IP, or None.
 
     Fail-safe: any exception returns None without raising.
-    Redis cache miss → HTTP call → cache result (even empty dict to avoid re-calling).
+    Cache miss → HTTP call → cache result (even empty dict to avoid re-calling).
     """
     if not ip:
         return None
@@ -63,16 +64,13 @@ def lookup_geo(ip: Optional[str]) -> Optional[dict]:
 
     cache_key = f"{_GEO_CACHE_PREFIX}{ip}"
 
-    # ── Try Redis cache first (best-effort) ──────────────────────────────────
-    redis_client = None
+    # ── Try in-process cache first (best-effort) ─────────────────────────────
     try:
-        redis_client = get_redis_client()
-        if redis_client is not None:
-            cached = redis_client.get(cache_key)
-            if cached is not None:
-                return json.loads(cached)
+        cached = get_backend().get(cache_key)
+        if cached is not None:
+            return json.loads(cached)
     except Exception as exc:  # noqa: BLE001
-        logger.warning("Meta geo: Redis read error for ip=%s: %s", ip, exc)
+        logger.warning("Meta geo: cache read error for ip=%s: %s", ip, exc)
         # Continue without cache — do the HTTP call anyway
 
     # ── HTTP lookup ───────────────────────────────────────────────────────────
@@ -91,9 +89,8 @@ def lookup_geo(ip: Optional[str]) -> Optional[dict]:
 
     # ── Cache result (even empty dict → avoid repeated calls for bad IPs) ────
     try:
-        if redis_client is not None:
-            redis_client.setex(cache_key, _GEO_CACHE_TTL, json.dumps(geo))
+        get_backend().setex(cache_key, _GEO_CACHE_TTL, json.dumps(geo))
     except Exception as exc:  # noqa: BLE001
-        logger.warning("Meta geo: Redis write error for ip=%s: %s", ip, exc)
+        logger.warning("Meta geo: cache write error for ip=%s: %s", ip, exc)
 
     return geo or None  # return None when empty dict (no usable geo fields)

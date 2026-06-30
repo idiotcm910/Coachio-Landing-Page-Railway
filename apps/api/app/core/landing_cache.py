@@ -14,7 +14,7 @@ import logging
 from typing import Optional
 
 from app.core.config import settings
-from app.core.redis_client import get_backend
+from app.core.cache import get_backend
 
 logger = logging.getLogger(__name__)
 

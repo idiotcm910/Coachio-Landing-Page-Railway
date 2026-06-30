@@ -42,7 +42,7 @@ for i in $(seq 1 40); do
 done
 ```
 
-Expected: `db  redis  api  web` all show `healthy`.
+Expected: `db  api  web` all show `healthy`.
 
 ### Smoke sanity checks
 
@@ -78,22 +78,17 @@ docker compose exec db psql -U coachio -d coachio \
 
 ### Prerequisites
 
-- Python 3.12, psql (PostgreSQL >= 14), redis-server
+- Python 3.12, psql (PostgreSQL >= 14)
 - venv at `apps/api/.venv` with dependencies installed
 
 ### Setup
 
 ```bash
-# 1. Start Redis on a dedicated port
-redis-server --port 6390 --daemonize yes --logfile /tmp/redis-6390.log
-redis-cli -p 6390 ping   # expect: PONG
-
-# 2. Create a clean smoke database
+# 1. Create a clean smoke database
 dropdb --if-exists coachio_smoke && createdb coachio_smoke
 
-# 3. Export env vars (edit values as needed)
+# 2. Export env vars (edit values as needed)
 export DATABASE_URL="postgresql+psycopg2:///coachio_smoke"
-export REDIS_URL="redis://localhost:6390/0"
 export SECRET_KEY="smoke-secret-key-change-me"
 export SEPAY_ACCOUNT_NUMBER="1234567890"
 export SEPAY_BANK_CODE="OCB"
@@ -107,15 +102,15 @@ export S3_SECRET_KEY=""
 export FRONTEND_URL="http://localhost:3100"
 export ALLOWED_ORIGINS="http://localhost:3100"
 
-# 4. Run migrations (from apps/api/)
+# 3. Run migrations (from apps/api/)
 cd apps/api
 .venv/bin/alembic upgrade head
 
-# 5. Seed admin (use a real domain -- .test TLD is rejected by email validator)
+# 4. Seed admin (use a real domain -- .test TLD is rejected by email validator)
 .venv/bin/python -m app.scripts.create_admin \
   --email admin@coachio.ai --password smokePass123
 
-# 6. Start API server (background)
+# 5. Start API server (background)
 .venv/bin/uvicorn main:app --host 127.0.0.1 --port 8010 &
 # Wait for: "Application startup complete."
 
@@ -131,7 +126,6 @@ curl -fsS http://127.0.0.1:8010/api/v1/openapi.json | head -c 60
 
 ```bash
 kill $(pgrep -f "uvicorn main:app --host 127.0.0.1 --port 8010")
-redis-cli -p 6390 shutdown nosave
 dropdb coachio_smoke   # optional
 ```
 
@@ -231,7 +225,7 @@ curl -s -w '\nHTTP_%{http_code}' -X PATCH "$BASE/admin/funnels/$FUNNEL_ID" \
 curl -s -w '\nHTTP_%{http_code}' "$BASE/public/funnels/$SLUG"
 ```
 
-**Expect:** HTTP 200 + JSON with `title`, `product_name`, `price`. Redis landing cache populated on first hit.
+**Expect:** HTTP 200 + JSON with `title`, `product_name`, `price`. In-process landing cache populated on first hit.
 
 ---
 

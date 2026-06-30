@@ -1,19 +1,20 @@
 # Railway Template — Coachio Landing Page
 
-One-click Railway deployment of Coachio Landing Page: FastAPI api + Next.js web + managed Postgres + managed Redis (optional).
+One-click Railway deployment of Coachio Landing Page: FastAPI api + Next.js web + managed Postgres. No Redis needed — caching is in-process.
 
 > This repo is a Railway-optimised downstream of [coachio-landing-page](https://github.com/sonlovinbot/coachio-landing-page). Railway-specific files (`railway.toml`, `railway.json`, cache backend, health endpoints) are excluded from upstream sync.
 
 ---
 
-## Components (4 services)
+## Components (3 services)
 
 | Service | Image / Builder | Notes |
 |---------|----------------|-------|
 | **api** | `apps/api/Dockerfile` | FastAPI + Alembic; pre-deploy migration |
 | **web** | `apps/web/Dockerfile` | Next.js 14 standalone, pnpm workspace build from repo root |
 | **Postgres** | Railway managed (postgres:16) | Auto-exposes `DATABASE_URL` |
-| **Redis** | Railway managed (redis:7-alpine) | Optional — app falls back to in-memory cache |
+
+> No Redis needed — the API uses an in-process cache (InMemoryBackend). Keep `numReplicas = 1` (Railway default) for consistent cache state across the process.
 
 ---
 
@@ -24,7 +25,6 @@ One-click Railway deployment of Coachio Landing Page: FastAPI api + Next.js web 
 | Variable | Template value | Notes |
 |----------|---------------|-------|
 | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` | Managed Postgres connection string |
-| `REDIS_URL` | `${{Redis.REDIS_URL}}` | Optional — leave blank → in-memory cache (no Redis needed) |
 | `SECRET_KEY` | `${{secret(32)}}` | Auto-generated 32-char random string at deploy time |
 | `FRONTEND_URL` | `https://${{web.RAILWAY_PUBLIC_DOMAIN}}` | Used for CORS + email links back to the web app |
 | `NEXT_PUBLIC_BACKEND_URL` | `https://${{api.RAILWAY_PUBLIC_DOMAIN}}` | Browser-side API base URL (baked into Next.js build) |
@@ -61,12 +61,6 @@ On the very first deploy of a fresh template, Postgres is provisioned first. The
 
 ---
 
-## Redis Optional / In-Memory Fallback
-
-If `REDIS_URL` is blank or Redis is unreachable at startup, the api uses an in-memory dict-based cache (TTL, rate-limit counters) instead. The app starts up green without Redis.
-
-**Caveat:** in-memory cache is not shared across replicas. Keep `numReplicas = 1` (Railway default) or provision Redis when scaling horizontally.
-
 ---
 
 ## Health Checks
@@ -89,7 +83,7 @@ The template is published from the Railway dashboard by the repo owner. Steps:
 - [ ] Link the GitHub repo; Railway auto-reads `railway.json` for service definitions.
 - [ ] Configure each service's variables (copy the wiring table above); mark optional variables as *prompt* so deployers are asked at deploy time.
 - [ ] Set `SECRET_KEY` source to **generated** (`secret(32)`).
-- [ ] Add a **Postgres** and **Redis** plugin to the template.
+- [ ] Add a **Postgres** plugin to the template.
 - [ ] Save and preview the template deploy flow.
 - [ ] Click **Publish to Marketplace** — Railway team reviews before it appears publicly.
 - [ ] After approval, copy the template ID from the marketplace URL.
@@ -108,4 +102,4 @@ The template is published from the Railway dashboard by the repo owner. Steps:
 - **Build context:** Railway Root Directory is `/` (repo root). Both Dockerfiles require the full monorepo context for pnpm workspace package resolution (`@coachio/api-client`, `@coachio/design-system`).
 - **Private networking:** web SSR calls api via `http://${{api.RAILWAY_PRIVATE_DOMAIN}}` (IPv6 mesh, no egress charges). Public browser calls use `NEXT_PUBLIC_BACKEND_URL`.
 - **Watch patterns:** `apps/api/railway.toml` watches `apps/api/**` only; `apps/web/railway.toml` watches `apps/web/**`, `packages/**`, and `pnpm-lock.yaml`. Changes outside these paths do not trigger a rebuild of that service.
-- **Scaling:** Default `numReplicas = 1`. Scale api replicas only when Redis is provisioned (in-memory cache is per-replica).
+- **Scaling:** Default `numReplicas = 1`. The in-memory cache is per-process — keep a single replica for consistent cache state.

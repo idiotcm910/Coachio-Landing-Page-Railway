@@ -11,17 +11,12 @@ The injectable `time_fn` parameter makes expiry tests deterministic
 import threading
 import time
 from typing import Optional
-from unittest.mock import MagicMock
 
 import pytest
 
-# ---------------------------------------------------------------------------
-# Step 1 — import the module under test (will fail until we create it)
-# ---------------------------------------------------------------------------
 from app.core.cache_backend import (
     CacheBackend,
     InMemoryBackend,
-    RedisBackend,
     get_cache_backend,
 )
 
@@ -209,84 +204,19 @@ class TestProtocolConformance:
         assert callable(getattr(backend, "delete", None))
         assert callable(getattr(backend, "incr", None))
 
-    def test_redis_backend_has_required_methods(self):
-        """RedisBackend must expose the same interface (construction doesn't connect)."""
-        fake_client = MagicMock()
-        rb = RedisBackend(client=fake_client)
-        assert callable(getattr(rb, "get", None))
-        assert callable(getattr(rb, "setex", None))
-        assert callable(getattr(rb, "delete", None))
-        assert callable(getattr(rb, "incr", None))
-
 
 # ---------------------------------------------------------------------------
-# RedisBackend delegation (no live server)
-# ---------------------------------------------------------------------------
-
-class TestRedisBackendDelegation:
-    def _make(self):
-        fake = MagicMock()
-        return RedisBackend(client=fake), fake
-
-    def test_get_delegates_to_redis(self):
-        rb, fake = self._make()
-        fake.get.return_value = "val"
-        assert rb.get("k") == "val"
-        fake.get.assert_called_once_with("k")
-
-    def test_setex_delegates_to_redis(self):
-        rb, fake = self._make()
-        rb.setex("k", 30, "data")
-        fake.setex.assert_called_once_with("k", 30, "data")
-
-    def test_delete_delegates_to_redis(self):
-        rb, fake = self._make()
-        rb.delete("k")
-        fake.delete.assert_called_once_with("k")
-
-    def test_incr_sets_expire_on_first_call(self):
-        """incr: when pipe returns count=1 (first call) → expire is set."""
-        rb, fake = self._make()
-        pipe = MagicMock()
-        fake.pipeline.return_value = pipe
-        pipe.execute.return_value = (1, -1)  # count=1, ttl=-1 (key just created)
-        result = rb.incr("rl:key", ttl=60)
-        pipe.incr.assert_called_once_with("rl:key")
-        pipe.ttl.assert_called_once_with("rl:key")
-        fake.expire.assert_called_once_with("rl:key", 60)
-        assert result == 1
-
-    def test_incr_skips_expire_when_ttl_already_set(self):
-        """incr: when count > 1 and ttl is valid → expire NOT re-called."""
-        rb, fake = self._make()
-        pipe = MagicMock()
-        fake.pipeline.return_value = pipe
-        pipe.execute.return_value = (3, 45)  # count=3, ttl=45 s remaining
-        rb.incr("rl:key", ttl=60)
-        fake.expire.assert_not_called()
-
-
-# ---------------------------------------------------------------------------
-# Factory
+# Factory — always returns InMemoryBackend
 # ---------------------------------------------------------------------------
 
 class TestGetCacheBackend:
-    def test_returns_in_memory_when_no_redis_url(self):
-        fake_settings = MagicMock()
-        fake_settings.REDIS_URL = ""
-        backend = get_cache_backend(fake_settings)
+    def test_returns_in_memory_always(self):
+        backend = get_cache_backend()
         assert isinstance(backend, InMemoryBackend)
 
-    def test_returns_redis_backend_when_redis_url_set(self):
-        """Factory creates RedisBackend; construction must not connect."""
+    def test_returns_in_memory_when_settings_passed(self):
+        """Factory ignores settings arg (no Redis in Railway edition)."""
+        from unittest.mock import MagicMock
         fake_settings = MagicMock()
-        fake_settings.REDIS_URL = "redis://localhost:6379/0"
-        # RedisBackend construction pings — so we check it returns the right type.
-        # In a unit test without a live server we patch the redis module.
-        import unittest.mock as mock_module
-
-        with mock_module.patch("app.core.cache_backend.redis") as mock_redis:
-            mock_client = MagicMock()
-            mock_redis.from_url.return_value = mock_client
-            backend = get_cache_backend(fake_settings)
-        assert isinstance(backend, RedisBackend)
+        backend = get_cache_backend(fake_settings)
+        assert isinstance(backend, InMemoryBackend)

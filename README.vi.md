@@ -36,7 +36,7 @@ Nền tảng funnel & landing page mã nguồn mở: xây dựng landing page, t
 ### Funnel & Landing Builder
 - Tạo, chỉnh sửa, publish funnel với nhiều sections
 - Cấu hình SEO cho từng funnel (title, description, OG tags)
-- Cache landing page bằng Redis (TTL có thể tuỳ chỉnh)
+- Cache landing page in-process (TTL có thể tuỳ chỉnh)
 - Variables (biến tuỳ chỉnh) per-funnel dùng trong landing content
 - Preview landing trước khi publish
 
@@ -111,7 +111,7 @@ Nền tảng funnel & landing page mã nguồn mở: xây dựng landing page, t
 - **Framework**: Python 3.12 + [FastAPI](https://fastapi.tiangolo.com/)
 - **ORM**: SQLAlchemy + Alembic (migrations)
 - **Database**: PostgreSQL 16
-- **Cache / Rate-limit**: Redis 7
+- **Cache / Rate-limit**: In-process (InMemoryBackend, no Redis)
 - **Email**: [Resend](https://resend.com/) SDK
 - **Storage**: boto3 (S3-compatible) + Bunny CDN (tuỳ chọn)
 - **Tracking**: Meta Conversions API
@@ -212,10 +212,9 @@ coachio-landing-page/
 | pnpm | 10 (cụ thể: `10.13.1`) | Package manager |
 | Python | 3.12 | FastAPI backend |
 | PostgreSQL | 16 | Database chính |
-| Redis | 7 | Cache landing + hàng đợi job |
 | Docker + Compose v2 | Engine ≥ 24 | Tuỳ chọn — cho chạy toàn bộ bằng container |
 
-> Không dùng Docker: cài đặt Node, pnpm, Python 3.12, PostgreSQL và Redis trực tiếp trên máy.
+> Không dùng Docker: cài đặt Node, pnpm, Python 3.12 và PostgreSQL trực tiếp trên máy. Không cần Redis.
 
 ---
 
@@ -245,7 +244,6 @@ Mở `.env` và điền các key bắt buộc:
 
 ```env
 DATABASE_URL=postgresql://coachio:coachio@localhost:5432/coachio
-REDIS_URL=redis://localhost:6379/0
 SECRET_KEY=<random-string-dài>   # openssl rand -hex 32
 SEPAY_BANK_NAME=OCB
 SEPAY_ACCOUNT_NUMBER=<số-tài-khoản>
@@ -331,7 +329,6 @@ Lần đầu build sẽ cần internet để pull image và cài pip/pnpm depend
 | Service | Image | Cổng (host:container) | Mô tả |
 |---------|-------|-----------------------|-------|
 | `db` | `postgres:16-alpine` | `5432:5432` | PostgreSQL database |
-| `redis` | `redis:7-alpine` | `6379:6379` | Redis cache & job queue |
 | `api` | Build từ `apps/api/Dockerfile` | `8000:8000` | FastAPI backend |
 | `web` | Build từ `apps/web/Dockerfile` | `3000:3000` | Next.js frontend |
 
@@ -371,12 +368,11 @@ Toàn bộ config nằm trong `.env` (copy từ `.env.example`). Bảng dưới 
 | `API_V1_PREFIX` | `/api/v1` | Mount prefix cho tất cả routes v1 |
 | `DEBUG` | `False` | Bật chế độ debug (chỉ dùng local) |
 
-### Nhóm: Database / Redis
+### Nhóm: Database
 
 | Biến | Ví dụ | Mô tả |
 |------|-------|-------|
 | `DATABASE_URL` | `postgresql://coachio:coachio@db:5432/coachio` | Postgres connection string (host `db` trong Docker, `localhost` khi chạy local) |
-| `REDIS_URL` | `redis://redis:6379/0` | Redis connection string |
 
 ### Nhóm: Bảo mật & JWT Admin
 
@@ -447,7 +443,7 @@ Toàn bộ config nằm trong `.env` (copy từ `.env.example`). Bảng dưới 
 
 | Biến | Mặc định | Mô tả |
 |------|----------|-------|
-| `LANDING_CACHE_ENABLED` | `True` | Bật/tắt Redis cache cho landing |
+| `LANDING_CACHE_ENABLED` | `True` | Bật/tắt in-process cache cho landing |
 | `LANDING_CACHE_TTL` | `3600` | TTL cache landing (giây) |
 | `FUNNEL_ORDER_EXPIRY_JOB_INTERVAL_SECONDS` | `300` | Chu kỳ job hết hạn đơn |
 | `BROADCAST_BATCH_SIZE` | `100` | Số email gửi mỗi batch |
@@ -482,7 +478,7 @@ Admin cấu hình landing (sections, SEO, variables, email templates)
 Admin publish funnel (status: published)
     ↓
 Khách vào URL công khai: GET /funnels/[slug]
-    → Landing page render từ server (SSR), cache Redis
+    → Landing page render từ server (SSR), cache in-process
     ↓
 Khách nhập thông tin → Thu lead
     POST /api/v1/public/funnels/leads/capture
@@ -582,7 +578,7 @@ cd apps/api && pytest
 ```
 
 - **~160 test functions** trong **26 file test** (thư mục `apps/api/tests/`)
-- Bao gồm: checkout flow, discount engine, broadcast, gift fulfilment, lead capture, landing cache, revenue analytics, lucky draw, media library, URL redirects,...
+- Bao gồm: checkout flow, discount engine, broadcast, gift fulfilment, lead capture, in-process landing cache, revenue analytics, lucky draw, media library, URL redirects,...
 
 ### Frontend (Vitest)
 

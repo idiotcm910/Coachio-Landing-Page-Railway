@@ -47,7 +47,7 @@ Sync done. NOW REVIEW:
 
 Shared files the Railway edition MODIFIES (re-check these after every sync — upstream
 may have changed them and overwritten the Railway tweaks; re-apply if needed):
-  - apps/api/app/core/redis_client.py     (backend selection: Redis vs in-memory)
+  - apps/api/app/core/cache.py            (in-process backend accessor; Railway-only, no Redis)
   - apps/api/app/core/landing_cache.py    (uses cache backend)
   - apps/api/app/core/rate_limit.py       (uses cache backend)
   - apps/api/app/services/funnel_analytics_service.py  (uses cache backend)

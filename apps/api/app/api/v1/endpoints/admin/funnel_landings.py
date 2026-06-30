@@ -90,7 +90,7 @@ def preview_landing(
     """Admin-only preview of the public landing for a funnel of ANY status
     (including draft/unpublished), so admins can review before publishing.
 
-    Builds the payload directly from the DB and never reads/writes the Redis
+    Builds the payload directly from the DB and never reads/writes the
     landing cache (mirrors how drafts already skip the cache). Does not change
     the funnel's publish status."""
     funnel = get_funnel_or_404(db, funnel_id)

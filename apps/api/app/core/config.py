@@ -50,9 +50,6 @@ class Settings(BaseSettings):
                 pairs.append((host, to))
         return pairs
 
-    # Redis
-    REDIS_URL: str = "redis://localhost:6379/0"
-
     # CORS — stored as raw string to support comma-separated .env values
     # Use `allowed_origins_list` property to access as List[str]
     ALLOWED_ORIGINS: str = "http://localhost:3000"

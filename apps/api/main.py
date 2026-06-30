@@ -53,9 +53,9 @@ logger = logging.getLogger(__name__)
 async def _app_resources():
     """Initialize cache backend, then start background jobs."""
     # Eager init so the selected backend is logged once at boot time.
-    from app.core.redis_client import get_backend
+    from app.core.cache import get_backend
     _active_backend = get_backend()
-    logger.info("Cache backend active: %s", type(_active_backend).__name__)
+    logger.info("Cache backend: in-memory (%s)", type(_active_backend).__name__)
 
     expiry_task = asyncio.create_task(start_expiry_job())
     broadcast_task = asyncio.create_task(start_broadcast_job())

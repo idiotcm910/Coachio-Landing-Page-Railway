@@ -10,7 +10,6 @@
       "rootDirectory": "/",
       "variables": {
         "DATABASE_URL": "${{Postgres.DATABASE_URL}}",
-        "REDIS_URL": "${{Redis.REDIS_URL}}",
         "SECRET_KEY": "${{secret(32)}}",
         "FRONTEND_URL": "https://${{web.RAILWAY_PUBLIC_DOMAIN}}",
         "NEXT_PUBLIC_BACKEND_URL": "https://${{api.RAILWAY_PUBLIC_DOMAIN}}"
@@ -32,10 +31,6 @@
     {
       "name": "Postgres",
       "image": "postgres:16"
-    },
-    {
-      "name": "Redis",
-      "image": "redis:7-alpine"
     }
   ]
 }

@@ -1,7 +1,7 @@
-"""Funnel public-landing payload builder + Redis write-through cache (D16).
+"""Funnel public-landing payload builder + write-through cache (D16).
 
 Reuses `app/core/landing_cache.py` (cache_get/set/evict — versioned keys, TTL
-backstop, graceful Redis-down fallback). One refresh/evict helper is the ONLY
+backstop, graceful cache-miss fallback). One refresh/evict helper is the ONLY
 cache write path so admin write sites can't miss an invalidation.
 
 Read path:  get_public_landing()  — cache GET → miss: build + SET.

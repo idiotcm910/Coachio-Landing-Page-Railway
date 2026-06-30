@@ -11,8 +11,8 @@ Usage:
         ...
 
 Storage backend:
-- Uses the shared CacheBackend (RedisBackend when REDIS_URL is set,
-  InMemoryBackend otherwise — single-process safe for low-traffic deployments).
+- Uses the shared CacheBackend (InMemoryBackend — single-process safe for
+  single-replica Railway deployments). No external cache service needed.
 - Key: "rl:{key_prefix}:{identifier}"
 
 Response on limit exceeded:
@@ -26,7 +26,7 @@ from typing import Callable, Optional
 
 from fastapi import Depends, HTTPException, Request, status
 
-from app.core.redis_client import get_backend
+from app.core.cache import get_backend
 
 logger = logging.getLogger(__name__)
 

@@ -24,20 +24,20 @@ funnel analytics — all from one admin app. FastAPI + Next.js, MIT licensed.
 
 ## Tech Stack
 
-- **API:** Python 3.12, FastAPI, SQLAlchemy, Alembic, Resend, boto3, Redis.
+- **API:** Python 3.12, FastAPI, SQLAlchemy, Alembic, Resend, boto3. In-process cache (no Redis).
 - **Web:** Next.js 14, Tailwind v3, `@coachio/api-client`, `@coachio/design-system`.
-- **Infra:** Postgres 16, Redis 7, Docker Compose. Monorepo: nx + pnpm.
+- **Infra:** Postgres 16, Docker Compose. Monorepo: nx + pnpm.
 
 ## Prerequisites
 
 - Docker + Docker Compose v2 (for the one-command run).
-- For local dev without Docker: Node 20 + pnpm 10, Python 3.12, Postgres 16, Redis 7.
+- For local dev without Docker: Node 20 + pnpm 10, Python 3.12, Postgres 16.
 
 ## Quick start (Docker)
 
 ```bash
 cp .env.example .env          # fill SEPAY_*, RESEND_*, S3_* etc. (placeholders ok for smoke)
-docker compose up --build     # starts db, redis, api (migrates), web
+docker compose up --build     # starts db, api (migrates), web
 ```
 
 - Web: http://localhost:3000
@@ -49,7 +49,7 @@ docker compose up --build     # starts db, redis, api (migrates), web
 ## Environment
 
 All config lives in `.env` (see `.env.example` for every key + a one-line note).
-Required to actually transact: `DATABASE_URL`, `REDIS_URL`, `SECRET_KEY`,
+Required to actually transact: `DATABASE_URL`, `SECRET_KEY`,
 `SEPAY_BANK_NAME`, `SEPAY_ACCOUNT_NUMBER`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL`,
 `FRONTEND_URL`. Storage (`S3_*` / `BUNNY_*`) and `META_DEFAULT_*` are optional.
 
@@ -71,7 +71,7 @@ them requires a rebuild, not just a container restart.
 
 ```bash
 pnpm install
-# 1) Postgres + Redis running locally; set DATABASE_URL / REDIS_URL in .env
+# 1) Postgres running locally; set DATABASE_URL in .env
 # 2) API (migrations + reload server)
 pnpm exec nx run api:migrate
 pnpm exec nx run api:serve        # http://localhost:8000
@@ -99,7 +99,7 @@ receipt email → gift → lucky-draw → broadcast → discount).
 
 ## Deploy lên Railway
 
-One-click deploy: api (FastAPI) + web (Next.js) + Postgres + Redis — see [`docs/railway-template.md`](./docs/railway-template.md) for the full env-var wiring table, pre-deploy migration notes, and the marketplace publish checklist.
+One-click deploy: api (FastAPI) + web (Next.js) + Postgres — see [`docs/railway-template.md`](./docs/railway-template.md) for the full env-var wiring table, pre-deploy migration notes, and the marketplace publish checklist.
 
 > The badge link above uses `CHANGE_ME` — update it with your template ID after publishing on the Railway dashboard.
 
