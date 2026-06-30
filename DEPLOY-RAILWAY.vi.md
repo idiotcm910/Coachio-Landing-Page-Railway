@@ -1,0 +1,131 @@
+# Hướng dẫn deploy Coachio Landing Page lên Railway — Tiếng Việt
+
+Hướng dẫn **đầy đủ từ đầu đến cuối** deploy bản này lên **Railway** (railway.com). Railway chạy **server thật** nên hợp với app này hơn Vercel: **background job chạy realtime trong process** (broadcast/gift/đơn hết hạn), monorepo nhiều service gốc, Postgres managed. Đã **bỏ Redis** (cache in-process).
+
+> **Kiến trúc:** 1 repo monorepo → **2 service** (`api` FastAPI, `web` Next.js) + **1 Postgres** managed. Background job chạy trong service `api`. Media dùng **S3/Bunny** (tùy chọn). Không Redis.
+
+> **Chi phí:** Railway không có gói free vĩnh viễn — có **$5 credit dùng thử**, sau đó **Hobby ~$5/tháng** tính theo usage (rẻ, và chạy được thật).
+
+---
+
+## Mục lục
+1. [Push repo lên GitHub](#1-push-repo-lên-github)
+2. [Tạo project + Postgres](#2-tạo-project--postgres)
+3. [Service API (FastAPI)](#3-service-api-fastapi)
+4. [Service WEB (Next.js)](#4-service-web-nextjs)
+5. [Biến môi trường](#5-biến-môi-trường)
+6. [Nối web ↔ api ↔ DB](#6-nối-web--api--db)
+7. [Migration + tạo admin](#7-migration--tạo-admin)
+8. [Background jobs](#8-background-jobs)
+9. [Chạy thử](#9-chạy-thử)
+10. [Xử lý lỗi](#10-xử-lý-lỗi)
+
+---
+
+## 1. Push repo lên GitHub
+Railway deploy từ GitHub. Đẩy repo này lên 1 repo GitHub của bạn (vd `Coachio-Landing-Page-Railway`), rồi mới làm bước 2.
+
+---
+
+## 2. Tạo project + Postgres
+1. https://railway.com → **New Project → Deploy from GitHub repo** → chọn repo.
+2. Railway tạo **1 service** đầu tiên từ repo — đây sẽ là service **api** (cấu hình ở bước 3).
+3. Bấm **+ Create → Database → Add PostgreSQL** → Railway tạo Postgres managed (tên mặc định `Postgres`).
+
+---
+
+## 3. Service API (FastAPI)
+Mở service vừa tạo → **Settings**:
+- **Source → Root Directory**: `/` (gốc repo).
+- **Build**: Builder = **Dockerfile**, Dockerfile Path = `apps/api/Dockerfile`.
+- **Deploy → Custom Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+- **Deploy → Pre-Deploy Command**: `alembic upgrade head`  *(tự tạo bảng mỗi lần deploy)*
+- **Deploy → Healthcheck Path**: `/api/v1/health`
+- (Tùy chọn) **Watch Paths**: `apps/api/**` *(chỉ rebuild khi code api đổi)*
+- Đổi tên service thành **`api`** (Settings → Service Name) cho dễ tham chiếu.
+
+> Repo đã có sẵn `apps/api/railway.toml` ghi đúng các giá trị trên — nếu Railway tự đọc thì khỏi nhập tay; không thì điền theo trên.
+
+---
+
+## 4. Service WEB (Next.js)
+Trong project → **+ Create → GitHub Repo** → chọn **cùng repo** → tạo service thứ 2. Mở nó → **Settings**:
+- **Source → Root Directory**: `/` (gốc repo — cần cho pnpm workspace).
+- **Build**: Builder = **Dockerfile**, Dockerfile Path = `apps/web/Dockerfile`.
+- **Deploy → Custom Start Command**: `node apps/web/server.js`
+- **Deploy → Healthcheck Path**: `/api/health`
+- (Tùy chọn) **Watch Paths**: `apps/web/**`, `packages/**`, `pnpm-lock.yaml`
+- Đổi tên service thành **`web`**.
+
+---
+
+## 5. Biến môi trường
+### Service `api` (Variables)
+| Biến | Giá trị |
+|---|---|
+| `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` *(tham chiếu Postgres managed)* |
+| `SECRET_KEY` | chuỗi ngẫu nhiên mạnh — `openssl rand -hex 32` |
+| `ALLOWED_ORIGINS` | `https://${{web.RAILWAY_PUBLIC_DOMAIN}}` *(CORS cho web)* |
+| `FRONTEND_URL` | `https://${{web.RAILWAY_PUBLIC_DOMAIN}}` |
+| *(tùy chọn — để trống vẫn chạy)* | `RESEND_API_KEY`,`RESEND_FROM_EMAIL`; `SEPAY_BANK_NAME`,`SEPAY_ACCOUNT_NUMBER`; `S3_ENDPOINT`,`S3_BUCKET_NAME`,`S3_ACCESS_KEY`,`S3_SECRET_KEY` (media); `META_DEFAULT_PIXEL_ID`,`META_DEFAULT_CAPI_TOKEN` |
+
+### Service `web` (Variables)
+| Biến | Giá trị |
+|---|---|
+| `NEXT_PUBLIC_BACKEND_URL` | `https://${{api.RAILWAY_PUBLIC_DOMAIN}}` |
+| `API_INTERNAL_URL` | `https://${{api.RAILWAY_PUBLIC_DOMAIN}}` *(SSR; dùng public cho đơn giản)* |
+| `NEXT_PUBLIC_DEFAULT_FUNNEL_SLUG` | *(tùy chọn)* slug funnel cho trang `/` |
+
+> Bắt buộc: trước hết vào service `api` và `web` → tab **Settings → Networking → Generate Domain** để mỗi service có public domain (thì `RAILWAY_PUBLIC_DOMAIN` mới có giá trị).
+
+---
+
+## 6. Nối web ↔ api ↔ DB
+- `${{Postgres.DATABASE_URL}}` → api tự nối DB.
+- `${{api.RAILWAY_PUBLIC_DOMAIN}}` / `${{web.RAILWAY_PUBLIC_DOMAIN}}` → Railway tự thay bằng domain thật khi deploy (đặt biến dạng tham chiếu, không gõ domain tay).
+- (Nâng cao) Muốn web gọi api qua **mạng nội bộ** (nhanh hơn, không ra internet): đặt `API_INTERNAL_URL = http://${{api.RAILWAY_PRIVATE_DOMAIN}}:8000` và sửa start command api thành `--port 8000`. Để đơn giản thì dùng public như bảng trên.
+
+Sau khi đủ biến → **Deploy** lại cả 2 service.
+
+---
+
+## 7. Migration + tạo admin
+- **Migration**: đã tự chạy qua **Pre-Deploy Command** (`alembic upgrade head`) mỗi lần deploy api. Khỏi làm tay.
+- **Tạo admin** (1 lần): mở service `api` → tab **Settings/Deployments → ⋯ → Shell** (hoặc Railway CLI `railway run`), chạy:
+  ```bash
+  python -m app.scripts.create_admin --email ban@email.com --password 'matkhau-manh'
+  ```
+  *(chạy trong môi trường api nên đã có `DATABASE_URL` + `SECRET_KEY`).*
+
+---
+
+## 8. Background jobs
+**Không cần cấu hình gì thêm** — vì api là server chạy liên tục, các job chạy **trong process** qua lifespan của FastAPI:
+- Gửi **broadcast** email (interval `BROADCAST_JOB_INTERVAL_SECONDS`).
+- Gửi **gift** (interval `GIFT_JOB_INTERVAL_SECONDS`).
+- **Hết hạn đơn** PENDING (interval `FUNNEL_ORDER_EXPIRY_JOB_INTERVAL_SECONDS`).
+
+> Đây là khác biệt lớn so với Vercel: trên Railway job chạy **realtime**, không bị giới hạn cron 1×/ngày. (Muốn tách riêng thành service `worker` thì tạo thêm 1 service cùng repo với start command riêng — nhưng với demo/khối lượng nhỏ, để in-process là đủ.)
+
+---
+
+## 9. Chạy thử
+1. Mở domain web (`https://web-...up.railway.app`) → `/admin` đăng nhập (admin ở bước 7).
+2. Tạo **Product** (digital) → tạo **Funnel** → **Publish**.
+3. Mở landing public `/funnels/<slug>` → kiểm tra 200.
+4. Thử thu lead + checkout (có `SEPAY_*` thì ra QR).
+5. Kiểm tra `https://api-...up.railway.app/api/v1/health` → `{"status":"ok"}`.
+
+---
+
+## 10. Xử lý lỗi
+- **api deploy đỏ ở Pre-Deploy** → migration lỗi: kiểm tra `DATABASE_URL` đã trỏ `${{Postgres.DATABASE_URL}}` chưa; xem log.
+- **web 502 / không gọi được api** → kiểm tra `NEXT_PUBLIC_BACKEND_URL` (web) + `ALLOWED_ORIGINS` (api) đã trỏ đúng domain chưa; cả 2 service đã **Generate Domain** chưa.
+- **`RAILWAY_PUBLIC_DOMAIN` rỗng** → vào Settings → Networking → **Generate Domain** cho service đó.
+- **Build web lỗi pnpm workspace** → đảm bảo Root Directory = `/` (build context có `packages/`).
+- **Ảnh không upload được** → chưa set `S3_*`/`BUNNY_*` (media là tùy chọn; điền key nếu cần media).
+- **Đăng nhập admin lỗi** → đã tạo admin (bước 7) + `SECRET_KEY` đã set chưa.
+
+---
+
+Vướng bước nào gửi log Railway để được hỗ trợ. 🚂
