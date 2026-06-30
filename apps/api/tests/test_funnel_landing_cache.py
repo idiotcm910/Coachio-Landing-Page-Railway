@@ -1,7 +1,7 @@
 """Tests for the funnel landing write-through cache (task 8.8, D16).
 
 Covers: read-from-cache, miss→repopulate, write-through refresh, default-discount
-write-through, unpublish/slug-change eviction, Redis-down graceful fallback.
+write-through, unpublish/slug-change eviction, cache-miss graceful fallback.
 
 Ported to coachio-landing-page: User removed; admin represented as a fixed string id.
 """
@@ -37,22 +37,30 @@ TABLES = [
 ]
 
 
-class FakeRedis:
+class FakeBackend:
+    """Minimal CacheBackend-compatible in-process store for tests.
+
+    Interface matches CacheBackend (get/setex/delete/incr) so tests can
+    monkeypatch landing_cache.get_backend with this object.
+    """
+
     def __init__(self):
-        self.store = {}
+        # Flat dict: key → raw string value (no TTL tracking needed in tests)
+        self.store: dict = {}
 
-    def ping(self):
-        return True
-
-    def get(self, key):
+    def get(self, key: str):
         return self.store.get(key)
 
-    def setex(self, key, ttl, value):
+    def setex(self, key: str, ttl: int, value: str) -> None:
         self.store[key] = value
 
-    def delete(self, *keys):
-        for key in keys:
-            self.store.pop(key, None)
+    def delete(self, key: str) -> None:
+        self.store.pop(key, None)
+
+    def incr(self, key: str, ttl: int) -> int:
+        count = int(self.store.get(key, 0)) + 1
+        self.store[key] = str(count)
+        return count
 
 
 def create_tables():
@@ -79,8 +87,8 @@ def db():
 
 @pytest.fixture()
 def fake_redis(monkeypatch):
-    fake = FakeRedis()
-    monkeypatch.setattr(landing_cache, "get_redis_client", lambda: fake)
+    fake = FakeBackend()
+    monkeypatch.setattr(landing_cache, "get_backend", lambda: fake)
     return fake
 
 
@@ -175,8 +183,12 @@ def test_slug_change_evicts_old_key(db, fake_redis):
     assert cache_key("new-slug") in fake_redis.store
 
 
-def test_redis_down_falls_back_to_compute(db, monkeypatch):
-    monkeypatch.setattr(landing_cache, "get_redis_client", lambda: None)
+def test_cache_miss_falls_back_to_compute(db, monkeypatch):
+    """Service must compute from DB when cache returns no data (miss/disabled)."""
+    from app.core.cache_backend import InMemoryBackend
+
+    # Fresh backend → all reads are misses → service falls back to DB each time
+    monkeypatch.setattr(landing_cache, "get_backend", lambda: InMemoryBackend())
     funnel, _ = create_published_funnel(db)
 
     payload = fls.get_public_landing(db, funnel)  # must not raise

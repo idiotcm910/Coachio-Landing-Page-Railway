@@ -46,10 +46,17 @@ logging.basicConfig(
 for _noisy_logger_name in ("boto3", "botocore", "s3transfer", "urllib3"):
     logging.getLogger(_noisy_logger_name).setLevel(logging.WARNING)
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def _app_resources():
-    """Background jobs: funnel order expiry, broadcast dispatch, gift dispatch."""
+    """Initialize cache backend, then start background jobs."""
+    # Eager init so the selected backend is logged once at boot time.
+    from app.core.redis_client import get_backend
+    _active_backend = get_backend()
+    logger.info("Cache backend active: %s", type(_active_backend).__name__)
+
     expiry_task = asyncio.create_task(start_expiry_job())
     broadcast_task = asyncio.create_task(start_broadcast_job())
     gift_task = asyncio.create_task(start_gift_job())
