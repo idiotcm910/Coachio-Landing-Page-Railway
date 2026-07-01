@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, BarChart3, Dice5, Filter, Image as ImageIcon, Package, ReceiptText, Send, Tag, Users } from 'lucide-react';
+import { ArrowLeft, BarChart3, Dice5, Filter, Home, Image as ImageIcon, Package, ReceiptText, Send, Tag, Users, Waypoints } from 'lucide-react';
 import { adminDashboardToken } from '@coachio/design-system/admin-dashboard-token';
 import { AdminDashboardSidebar } from './AdminDashboardSidebar';
 import { AdminDiscountsManagement } from './AdminDiscountsManagement';
 import { AdminMediaManagement } from './AdminMediaManagement';
+import { AdminSiteHomepageManagement } from './AdminSiteHomepageManagement';
+import { AdminUrlRedirectsManagement } from '../admin-url-redirects/AdminUrlRedirectsManagement';
 import { AdminFunnelOrdersManagement } from './orders/AdminFunnelOrdersManagement';
 import { AdminRevenueTabs } from './analytics/AdminRevenueTabs';
 import { AdminProductManagement } from '../admin-funnels/AdminProductManagement';
@@ -28,6 +30,8 @@ const menuItems: AdminDashboardMenuItem[] = [
   { id: 'discounts', label: 'Discounts', group: 'System', path: '/admin/discounts', icon: Tag },
   { id: 'broadcasts', label: 'Email Campaigns', group: 'System', path: '/admin/broadcasts', icon: Send },
   { id: 'media', label: 'Media Library', group: 'System', path: '/admin/media', icon: ImageIcon },
+  { id: 'homepage', label: 'Homepage', group: 'System', path: '/admin/homepage', icon: Home },
+  { id: 'url-redirects', label: 'URL Redirects', group: 'System', path: '/admin/url-redirects', icon: Waypoints },
 ];
 
 // Default to the first active (non-maintenance) menu so a maintenance page never opens.
@@ -129,6 +133,8 @@ export function AdminDashboardShell({ initialMenuId }: AdminDashboardShellProps 
           {activeItemId === 'discounts' ? <AdminDiscountsManagement /> : null}
           {activeItemId === 'broadcasts' ? <AdminBroadcastManagement /> : null}
           {activeItemId === 'media' ? <AdminMediaManagement /> : null}
+          {activeItemId === 'homepage' ? <AdminSiteHomepageManagement /> : null}
+          {activeItemId === 'url-redirects' ? <AdminUrlRedirectsManagement /> : null}
         </div>
       </section>
     </main>

@@ -1,5 +1,7 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { Home } from 'lucide-react';
+import { fetchRedirectPublicConfig } from '@coachio/api-client';
 
 export const metadata = {
   title: '404 — Không tìm thấy trang | Coachio',
@@ -7,7 +9,14 @@ export const metadata = {
 };
 
 // App Router 404 cho toàn bộ landing FE. Server component.
-export default function NotFound() {
+// Nếu admin bật "404 fallback" (admin-url-redirects), redirect tới trang đích thay vì
+// hiển thị UI 404. Ngược lại render UI 404 brand mặc định.
+export default async function NotFound() {
+  const config = await fetchRedirectPublicConfig();
+  if (config?.not_found?.enabled && config.not_found.target_url) {
+    redirect(config.not_found.target_url);
+  }
+
   return (
     <main className="grid min-h-screen place-items-center bg-deepBlack px-4 py-16 text-textDark">
       <div className="w-full max-w-xl text-center">

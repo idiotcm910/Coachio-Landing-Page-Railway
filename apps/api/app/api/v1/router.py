@@ -19,12 +19,14 @@ from app.api.v1.endpoints.admin import (
     broadcasts as admin_broadcasts,
     lucky_events as admin_lucky_events,
     url_redirects as admin_url_redirects,
+    site_homepage as admin_site_homepage,
 )
 from app.api.v1.endpoints.public import (
     funnels as public_funnels,
     funnel_lead_capture as public_funnel_lead_capture,
     lucky_events as public_lucky_events,
     url_redirects as public_url_redirects,
+    homepage as public_homepage,
 )
 from app.api.v1.endpoints import webhooks as sepay_webhook
 
@@ -49,10 +51,12 @@ api_router.include_router(admin_media_library.router, prefix="/admin/media", tag
 api_router.include_router(admin_broadcasts.router, prefix="/admin/broadcasts", tags=["Admin Broadcasts"])
 api_router.include_router(admin_lucky_events.router, prefix="/admin/lucky-events", tags=["Admin Lucky Draw"])
 api_router.include_router(admin_url_redirects.router, prefix="/admin/url-redirects", tags=["Admin URL Redirects"])
+api_router.include_router(admin_site_homepage.router, prefix="/admin/site-homepage", tags=["Admin Homepage"])
 
 # --- Public (anonymous / token) ---
 api_router.include_router(public_funnels.router, prefix="/public/funnels", tags=["Public Funnels"])
 api_router.include_router(public_funnel_lead_capture.router, prefix="/public/funnels", tags=["Public Funnels"])
 api_router.include_router(public_lucky_events.router, prefix="/public/lucky-events", tags=["Public Lucky Draw"])
 api_router.include_router(public_url_redirects.router, prefix="/public/url-redirects", tags=["Public URL Redirects"])
+api_router.include_router(public_homepage.router, prefix="/public/homepage", tags=["Public Homepage"])
 api_router.include_router(sepay_webhook.router, prefix="/hooks", tags=["Webhooks"])
