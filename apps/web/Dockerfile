@@ -13,8 +13,7 @@ COPY packages/api-client/package.json    packages/api-client/
 COPY packages/design-system/package.json packages/design-system/
 COPY apps/web/package.json               apps/web/
 
-RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
-    pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # 2) Source + build app web. Packages dùng chung transpile qua transpilePackages.
 COPY . .

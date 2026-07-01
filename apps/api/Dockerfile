@@ -9,10 +9,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+# Build CONTEXT = repo root (Railway Root Directory = /). Dùng path theo repo-root.
+COPY apps/api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY apps/api/ ./
 RUN chmod +x entrypoint.sh
 
 EXPOSE 8000
