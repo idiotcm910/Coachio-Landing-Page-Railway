@@ -19,16 +19,15 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Coachio Landing Page API"
     DEBUG: bool = False
 
-    # S3 Configuration
-    S3_ENDPOINT: str = ""
-    S3_BUCKET_NAME: str = ""
-    S3_ACCESS_KEY: str = ""
-    S3_SECRET_KEY: str = ""
-    S3_REGION: str = ""
+    # Storage Configuration (S3-compatible — e.g. Cloudflare R2)
+    STORAGE_ENDPOINT: str = ""
+    STORAGE_BUCKET: str = ""
+    STORAGE_ACCESS_KEY: str = ""
+    STORAGE_SECRET_KEY: str = ""
+    STORAGE_REGION: str = ""
     # Public base URL for media (e.g. Cloudflare R2 `https://pub-<hash>.r2.dev`
-    # or a custom domain). Uploads go via S3_* (R2 S3 API); public read uses this.
-    S3_PUBLIC_URL: str = ""
-    BUNNY_CDN_URL: str = ""
+    # or a custom domain). Uploads go via STORAGE_* (R2 S3 API); public read uses this.
+    STORAGE_PUBLIC_URL: str = ""
 
     # CDN host rewrite — migrate legacy Bunny shared host(s) (e.g. coachio-prod.b-cdn.net,
     # which some VN ISPs DNS-sinkhole) to a custom CNAME host (e.g. cdn.coachio.ai).
@@ -74,12 +73,6 @@ class Settings(BaseSettings):
     SEPAY_ACCOUNT_NUMBER: str = ""
     # Callback Configuration
     PREFIX_URL_CALLBACK: str = ""
-
-    # Bunny CDN
-    BUNNY_STORAGE_ZONE: str = ""
-    BUNNY_API_KEY: str = ""
-    BUNNY_PULL_ZONE_URL: str = ""
-    BUNNY_REGION: str = ""
 
     # Resend
     RESEND_API_KEY: str = ""

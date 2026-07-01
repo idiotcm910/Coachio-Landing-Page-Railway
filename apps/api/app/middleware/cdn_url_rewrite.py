@@ -11,7 +11,7 @@ the exact same files but is not sinkholed.
 Legacy URLs are stored as full URLs across many tables AND embedded inside JSONB
 content (funnel pages, agent skills, etc.). Rewriting at the response layer covers
 all of them in one place — no database migration, instantly reversible via config.
-New uploads should set ``BUNNY_CDN_URL`` directly to the canonical host so they
+New uploads should set ``STORAGE_PUBLIC_URL`` directly to the canonical host so they
 never carry the legacy host in the first place.
 """
 

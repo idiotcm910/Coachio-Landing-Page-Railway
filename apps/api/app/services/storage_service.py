@@ -15,12 +15,12 @@ class S3StorageService:
     def __init__(self):
         self.s3_client = boto3.client(
             's3',
-            endpoint_url=settings.S3_ENDPOINT or None,
-            aws_access_key_id=settings.S3_ACCESS_KEY,
-            aws_secret_access_key=settings.S3_SECRET_KEY,
-            region_name=settings.S3_REGION or None,
+            endpoint_url=settings.STORAGE_ENDPOINT or None,
+            aws_access_key_id=settings.STORAGE_ACCESS_KEY,
+            aws_secret_access_key=settings.STORAGE_SECRET_KEY,
+            region_name=settings.STORAGE_REGION or None,
         )
-        self.bucket_name = settings.S3_BUCKET_NAME
+        self.bucket_name = settings.STORAGE_BUCKET
 
     def generate_object_key(self, file_extension: str = "") -> str:
         """Generate a unique object key for S3"""
@@ -89,21 +89,20 @@ class S3StorageService:
         """Generate the PUBLIC URL for an object.
 
         Priority:
-          1. S3_PUBLIC_URL — a public base URL for the bucket. Use this for
+          1. STORAGE_PUBLIC_URL — a public base URL for the bucket. Use this for
              Cloudflare R2 (the `https://pub-<hash>.r2.dev` public URL or a
              custom domain) — the raw R2 S3 endpoint is NOT publicly readable.
-          2. BUNNY_CDN_URL — legacy Bunny CDN base.
-          3. S3_ENDPOINT — raw endpoint (only works if the bucket is public
+          2. STORAGE_ENDPOINT — raw endpoint (only works if the bucket is public
              on that host).
-          4. AWS S3 default virtual-hosted URL.
+          3. AWS S3 default virtual-hosted URL.
         """
-        public_base = settings.S3_PUBLIC_URL or settings.BUNNY_CDN_URL
+        public_base = settings.STORAGE_PUBLIC_URL
         if public_base:
             return f"{public_base.rstrip('/')}/{object_key}"
-        elif settings.S3_ENDPOINT:
-            return f"{settings.S3_ENDPOINT}/{self.bucket_name}/{object_key}"
+        elif settings.STORAGE_ENDPOINT:
+            return f"{settings.STORAGE_ENDPOINT}/{self.bucket_name}/{object_key}"
         else:
-            return f"https://{self.bucket_name}.s3.{settings.S3_REGION}.amazonaws.com/{object_key}"
+            return f"https://{self.bucket_name}.s3.{settings.STORAGE_REGION}.amazonaws.com/{object_key}"
 
     async def upload_file(self, file_path_or_url: str, object_key: Optional[str] = None) -> str:
         """

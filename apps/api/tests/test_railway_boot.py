@@ -51,8 +51,8 @@ def clean_boot(monkeypatch):
     for attr in (
         "SEPAY_BANK_NAME", "SEPAY_ACCOUNT_NUMBER", "PREFIX_URL_CALLBACK",
         "RESEND_API_KEY", "RESEND_FROM_EMAIL",
-        "S3_ENDPOINT", "S3_BUCKET_NAME", "S3_ACCESS_KEY", "S3_SECRET_KEY",
-        "BUNNY_CDN_URL", "BUNNY_STORAGE_ZONE", "BUNNY_API_KEY", "BUNNY_PULL_ZONE_URL",
+        "STORAGE_ENDPOINT", "STORAGE_BUCKET", "STORAGE_ACCESS_KEY", "STORAGE_SECRET_KEY",
+        "STORAGE_PUBLIC_URL",
         "META_DEFAULT_PIXEL_ID", "META_DEFAULT_CAPI_TOKEN",
     ):
         if hasattr(config_module.settings, attr):
