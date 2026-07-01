@@ -89,6 +89,26 @@ Sau khi đủ biến → **Deploy** lại cả 2 service.
 
 ---
 
+## 6b. Media với Cloudflare R2 (miễn phí) — tùy chọn
+Railway không có object storage/CDN. Dùng **Cloudflare R2** (S3-compatible, free 10GB, không phí egress) — code chạy nguyên, chỉ điền env vào service `api`:
+1. Cloudflare dashboard → **R2 → Create bucket** (vd `coachio-media`).
+2. Bucket → **Settings → Public access → Allow** → copy **Public URL** dạng `https://pub-<hash>.r2.dev` (hoặc gắn custom domain).
+3. **R2 → Manage API Tokens → Create** (Object Read & Write) → lấy `Access Key ID` + `Secret Access Key` + `Account ID`.
+4. Điền vào Variables của service `api`:
+
+| Biến | Giá trị |
+|---|---|
+| `S3_ENDPOINT` | `https://<ACCOUNT_ID>.r2.cloudflarestorage.com` |
+| `S3_BUCKET_NAME` | tên bucket (vd `coachio-media`) |
+| `S3_ACCESS_KEY` | R2 Access Key ID |
+| `S3_SECRET_KEY` | R2 Secret Access Key |
+| `S3_REGION` | `auto` |
+| `S3_PUBLIC_URL` | `https://pub-<hash>.r2.dev` *(URL public ở bước 2 — dùng để nhúng ảnh vào landing)* |
+
+> Upload đi qua S3 API của R2 (`S3_*`); ảnh hiển thị công khai dùng `S3_PUBLIC_URL`. Không set → media tắt, app vẫn chạy.
+
+---
+
 ## 7. Migration + tạo admin
 - **Migration**: đã tự chạy qua **Pre-Deploy Command** (`alembic upgrade head`) mỗi lần deploy api. Khỏi làm tay.
 - **Tạo admin** (1 lần): mở service `api` → tab **Settings/Deployments → ⋯ → Shell** (hoặc Railway CLI `railway run`), chạy:

@@ -86,17 +86,23 @@ class S3StorageService:
             raise Exception(f"S3 upload failed: {str(e)}")
 
     def _get_s3_url(self, object_key: str) -> str:
-        """Generate S3 URL for an object"""
-        # Use CDN URL if configured
-        if settings.BUNNY_CDN_URL:
-            # Ensure CDN URL doesn't end with trailing slash
-            cdn_url = settings.BUNNY_CDN_URL.rstrip('/')
-            return f"{cdn_url}/{object_key}"
+        """Generate the PUBLIC URL for an object.
+
+        Priority:
+          1. S3_PUBLIC_URL — a public base URL for the bucket. Use this for
+             Cloudflare R2 (the `https://pub-<hash>.r2.dev` public URL or a
+             custom domain) — the raw R2 S3 endpoint is NOT publicly readable.
+          2. BUNNY_CDN_URL — legacy Bunny CDN base.
+          3. S3_ENDPOINT — raw endpoint (only works if the bucket is public
+             on that host).
+          4. AWS S3 default virtual-hosted URL.
+        """
+        public_base = settings.S3_PUBLIC_URL or settings.BUNNY_CDN_URL
+        if public_base:
+            return f"{public_base.rstrip('/')}/{object_key}"
         elif settings.S3_ENDPOINT:
-            # For custom S3 endpoints
             return f"{settings.S3_ENDPOINT}/{self.bucket_name}/{object_key}"
         else:
-            # For AWS S3
             return f"https://{self.bucket_name}.s3.{settings.S3_REGION}.amazonaws.com/{object_key}"
 
     async def upload_file(self, file_path_or_url: str, object_key: Optional[str] = None) -> str:

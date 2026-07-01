@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     S3_ACCESS_KEY: str = ""
     S3_SECRET_KEY: str = ""
     S3_REGION: str = ""
+    # Public base URL for media (e.g. Cloudflare R2 `https://pub-<hash>.r2.dev`
+    # or a custom domain). Uploads go via S3_* (R2 S3 API); public read uses this.
+    S3_PUBLIC_URL: str = ""
     BUNNY_CDN_URL: str = ""
 
     # CDN host rewrite — migrate legacy Bunny shared host(s) (e.g. coachio-prod.b-cdn.net,
