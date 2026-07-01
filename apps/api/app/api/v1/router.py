@@ -17,10 +17,6 @@ from app.api.v1.endpoints.admin import (
     media_library as admin_media_library,
     funnel_broadcasts as admin_funnel_broadcasts,
     broadcasts as admin_broadcasts,
-    gifts as admin_gifts,
-    gift_automations as admin_gift_automations,
-    gift_campaigns as admin_gift_campaigns,
-    gift_grants as admin_gift_grants,
     lucky_events as admin_lucky_events,
     url_redirects as admin_url_redirects,
 )
@@ -51,10 +47,6 @@ api_router.include_router(admin_discounts.router, prefix="/admin/discounts", tag
 api_router.include_router(admin_leads.router, prefix="/admin/leads", tags=["Admin Leads"])
 api_router.include_router(admin_media_library.router, prefix="/admin/media", tags=["Media Library"])
 api_router.include_router(admin_broadcasts.router, prefix="/admin/broadcasts", tags=["Admin Broadcasts"])
-api_router.include_router(admin_gifts.router, prefix="/admin/gifts", tags=["Admin Gifts"])
-api_router.include_router(admin_gift_automations.router, prefix="/admin/gift-automations", tags=["Admin Gift Automations"])
-api_router.include_router(admin_gift_campaigns.router, prefix="/admin/gift-campaigns", tags=["Admin Gift Campaigns"])
-api_router.include_router(admin_gift_grants.router, prefix="/admin/gift-grants", tags=["Admin Gift Grants"])
 api_router.include_router(admin_lucky_events.router, prefix="/admin/lucky-events", tags=["Admin Lucky Draw"])
 api_router.include_router(admin_url_redirects.router, prefix="/admin/url-redirects", tags=["Admin URL Redirects"])
 

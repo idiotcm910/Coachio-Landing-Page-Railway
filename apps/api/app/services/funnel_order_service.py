@@ -224,31 +224,6 @@ class FunnelOrderService:
         )
 
     @staticmethod
-    def _fulfil_gifts_auto(
-        db: Session,
-        order: FunnelOrder,
-        background_tasks: BackgroundTasks | None,
-    ) -> None:
-        """Run `purchased`-trigger gift automations for the buyer (mechanism 1).
-
-        Delegates to the gift automation service, which finds matching active
-        automations, enforces `max_total_grants`, and delivers via the shared gift
-        core. Never raises — a gift issue must not break order completion.
-        """
-        from app.services.gift_automation_service import trigger as gift_trigger
-
-        gift_trigger(
-            db,
-            funnel_id=order.funnel_id,
-            trigger_status="purchased",
-            email=order.buyer_email,
-            full_name=order.buyer_full_name,
-            phone=order.buyer_phone,
-            source=f"order:{order.id}",
-            background_tasks=background_tasks,
-        )
-
-    @staticmethod
     def complete_order(
         db: Session,
         order: FunnelOrder,
@@ -293,11 +268,6 @@ class FunnelOrderService:
             db.query(Lead).filter(Lead.id == order.lead_id, Lead.converted_at.is_(None)).update(
                 {Lead.converted_at: datetime.now(timezone.utc)}, synchronize_session=False
             )
-
-        # Gift automations: deliver any active `purchased`-trigger gifts for this
-        # funnel (account + perks + email via the shared gift core). No-op when no
-        # active automation matches, so non-gift funnels behave exactly as before.
-        FunnelOrderService._fulfil_gifts_auto(db, order, background_tasks)
 
         if background_tasks is not None:
             background_tasks.add_task(send_funnel_receipt_email, order.funnel_id, order.id)

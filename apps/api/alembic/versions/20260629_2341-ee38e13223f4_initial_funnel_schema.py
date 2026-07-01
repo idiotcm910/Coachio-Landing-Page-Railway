@@ -27,43 +27,6 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_admin_users_email'), 'admin_users', ['email'], unique=True)
     op.create_index(op.f('ix_admin_users_id'), 'admin_users', ['id'], unique=False)
-    op.create_table('gift_campaigns',
-    sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('gift_ids', sa.JSON(), nullable=True),
-    sa.Column('email_subject', sa.Text(), server_default='', nullable=False),
-    sa.Column('email_html', sa.Text(), server_default='', nullable=False),
-    sa.Column('audience_config', sa.JSON(), nullable=True),
-    sa.Column('status', sa.String(length=16), server_default='draft', nullable=False),
-    sa.Column('scheduled_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('snapshot_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('total_recipients', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('sent_count', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('failed_count', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('skipped_count', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('last_error', sa.Text(), nullable=True),
-    sa.Column('started_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('completed_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('created_by', sa.String(length=36), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_gift_campaigns_id'), 'gift_campaigns', ['id'], unique=False)
-    op.create_index('ix_gift_campaigns_status', 'gift_campaigns', ['status'], unique=False)
-    op.create_table('gifts',
-    sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('internal_config', sa.JSON(), nullable=True),
-    sa.Column('external_items', sa.JSON(), nullable=True),
-    sa.Column('is_archived', sa.Boolean(), server_default='false', nullable=False),
-    sa.Column('created_by', sa.String(length=36), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_gifts_id'), 'gifts', ['id'], unique=False)
     op.create_table('site_settings',
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('key', sa.String(length=100), nullable=False),
@@ -112,33 +75,6 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_email_templates_id'), 'email_templates', ['id'], unique=False)
     op.create_index('ix_email_templates_scope_owner', 'email_templates', ['scope', 'owner_id'], unique=False)
-    op.create_table('gift_grants',
-    sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('gift_id', sa.String(length=36), nullable=False),
-    sa.Column('email', sa.String(length=255), nullable=False),
-    sa.Column('recipient_name', sa.String(length=255), nullable=True),
-    sa.Column('recipient_phone', sa.String(length=50), nullable=True),
-    sa.Column('source', sa.String(length=64), nullable=True),
-    sa.Column('external_items_snapshot', sa.JSON(), nullable=True),
-    sa.Column('granted_by', sa.String(length=36), nullable=True),
-    sa.Column('status', sa.String(length=16), server_default='granted', nullable=False),
-    sa.Column('email_status', sa.String(length=16), server_default='pending', nullable=False),
-    sa.Column('email_sent_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('email_error', sa.Text(), nullable=True),
-    sa.Column('email_subject_snapshot', sa.Text(), nullable=True),
-    sa.Column('email_html_snapshot', sa.Text(), nullable=True),
-    sa.Column('resend_count', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('last_resend_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('granted_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.ForeignKeyConstraint(['gift_id'], ['gifts.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('gift_id', 'email', name='uq_gift_grants_gift_email')
-    )
-    op.create_index('ix_gift_grants_email', 'gift_grants', ['email'], unique=False)
-    op.create_index('ix_gift_grants_email_status', 'gift_grants', ['email_status'], unique=False)
-    op.create_index(op.f('ix_gift_grants_gift_id'), 'gift_grants', ['gift_id'], unique=False)
-    op.create_index(op.f('ix_gift_grants_id'), 'gift_grants', ['id'], unique=False)
     op.create_table('media_assets',
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('object_key', sa.String(length=1024), nullable=False),
@@ -330,25 +266,6 @@ def upgrade() -> None:
     op.create_index(op.f('ix_funnel_page_views_funnel_id'), 'funnel_page_views', ['funnel_id'], unique=False)
     op.create_index(op.f('ix_funnel_page_views_id'), 'funnel_page_views', ['id'], unique=False)
     op.create_index(op.f('ix_funnel_page_views_page_type'), 'funnel_page_views', ['page_type'], unique=False)
-    op.create_table('gift_automations',
-    sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('gift_ids', sa.JSON(), nullable=True),
-    sa.Column('funnel_id', sa.String(length=36), nullable=True),
-    sa.Column('trigger_status', sa.String(length=16), nullable=False),
-    sa.Column('is_active', sa.Boolean(), server_default='true', nullable=False),
-    sa.Column('max_total_grants', sa.Integer(), nullable=True),
-    sa.Column('grants_count', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('email_subject', sa.Text(), server_default='', nullable=False),
-    sa.Column('email_html', sa.Text(), server_default='', nullable=False),
-    sa.Column('created_by', sa.String(length=36), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
-    sa.ForeignKeyConstraint(['funnel_id'], ['funnels.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_gift_automations_funnel_id'), 'gift_automations', ['funnel_id'], unique=False)
-    op.create_index('ix_gift_automations_funnel_status', 'gift_automations', ['funnel_id', 'trigger_status'], unique=False)
-    op.create_index(op.f('ix_gift_automations_id'), 'gift_automations', ['id'], unique=False)
     op.create_table('leads',
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
@@ -465,27 +382,6 @@ def upgrade() -> None:
     op.create_index(op.f('ix_funnel_sections_id'), 'funnel_sections', ['id'], unique=False)
     op.create_index(op.f('ix_funnel_sections_landing_page_id'), 'funnel_sections', ['landing_page_id'], unique=False)
     op.create_index(op.f('ix_funnel_sections_section_type'), 'funnel_sections', ['section_type'], unique=False)
-    op.create_table('gift_send_jobs',
-    sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('campaign_id', sa.String(length=36), nullable=False),
-    sa.Column('lead_id', sa.String(length=36), nullable=True),
-    sa.Column('email', sa.String(length=255), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=True),
-    sa.Column('phone', sa.String(length=50), nullable=True),
-    sa.Column('status', sa.String(length=16), server_default='pending', nullable=False),
-    sa.Column('attempts', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('claimed_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('error', sa.Text(), nullable=True),
-    sa.Column('sent_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.ForeignKeyConstraint(['campaign_id'], ['gift_campaigns.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['lead_id'], ['leads.id'], ondelete='SET NULL'),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('campaign_id', 'email', name='uq_gift_send_jobs_campaign_email')
-    )
-    op.create_index(op.f('ix_gift_send_jobs_campaign_id'), 'gift_send_jobs', ['campaign_id'], unique=False)
-    op.create_index('ix_gift_send_jobs_campaign_status', 'gift_send_jobs', ['campaign_id', 'status'], unique=False)
-    op.create_index(op.f('ix_gift_send_jobs_id'), 'gift_send_jobs', ['id'], unique=False)
     op.create_table('lucky_event_participants',
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('event_id', sa.String(length=36), nullable=False),
@@ -547,10 +443,6 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_lucky_event_participants_id'), table_name='lucky_event_participants')
     op.drop_index(op.f('ix_lucky_event_participants_event_id'), table_name='lucky_event_participants')
     op.drop_table('lucky_event_participants')
-    op.drop_index(op.f('ix_gift_send_jobs_id'), table_name='gift_send_jobs')
-    op.drop_index('ix_gift_send_jobs_campaign_status', table_name='gift_send_jobs')
-    op.drop_index(op.f('ix_gift_send_jobs_campaign_id'), table_name='gift_send_jobs')
-    op.drop_table('gift_send_jobs')
     op.drop_index(op.f('ix_funnel_sections_section_type'), table_name='funnel_sections')
     op.drop_index(op.f('ix_funnel_sections_landing_page_id'), table_name='funnel_sections')
     op.drop_index(op.f('ix_funnel_sections_id'), table_name='funnel_sections')
@@ -576,10 +468,6 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_leads_id'), table_name='leads')
     op.drop_index(op.f('ix_leads_email'), table_name='leads')
     op.drop_table('leads')
-    op.drop_index(op.f('ix_gift_automations_id'), table_name='gift_automations')
-    op.drop_index('ix_gift_automations_funnel_status', table_name='gift_automations')
-    op.drop_index(op.f('ix_gift_automations_funnel_id'), table_name='gift_automations')
-    op.drop_table('gift_automations')
     op.drop_index(op.f('ix_funnel_page_views_page_type'), table_name='funnel_page_views')
     op.drop_index(op.f('ix_funnel_page_views_id'), table_name='funnel_page_views')
     op.drop_index(op.f('ix_funnel_page_views_funnel_id'), table_name='funnel_page_views')
@@ -625,11 +513,6 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_media_assets_kind'), table_name='media_assets')
     op.drop_index(op.f('ix_media_assets_id'), table_name='media_assets')
     op.drop_table('media_assets')
-    op.drop_index(op.f('ix_gift_grants_id'), table_name='gift_grants')
-    op.drop_index(op.f('ix_gift_grants_gift_id'), table_name='gift_grants')
-    op.drop_index('ix_gift_grants_email_status', table_name='gift_grants')
-    op.drop_index('ix_gift_grants_email', table_name='gift_grants')
-    op.drop_table('gift_grants')
     op.drop_index('ix_email_templates_scope_owner', table_name='email_templates')
     op.drop_index(op.f('ix_email_templates_id'), table_name='email_templates')
     op.drop_table('email_templates')
@@ -640,11 +523,6 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_site_settings_key'), table_name='site_settings')
     op.drop_index(op.f('ix_site_settings_id'), table_name='site_settings')
     op.drop_table('site_settings')
-    op.drop_index(op.f('ix_gifts_id'), table_name='gifts')
-    op.drop_table('gifts')
-    op.drop_index('ix_gift_campaigns_status', table_name='gift_campaigns')
-    op.drop_index(op.f('ix_gift_campaigns_id'), table_name='gift_campaigns')
-    op.drop_table('gift_campaigns')
     op.drop_index(op.f('ix_admin_users_id'), table_name='admin_users')
     op.drop_index(op.f('ix_admin_users_email'), table_name='admin_users')
     op.drop_table('admin_users')

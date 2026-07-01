@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, BarChart3, Dice5, Filter, Gift, Image as ImageIcon, Package, ReceiptText, Send, Tag, Users, Zap } from 'lucide-react';
+import { ArrowLeft, BarChart3, Dice5, Filter, Image as ImageIcon, Package, ReceiptText, Send, Tag, Users } from 'lucide-react';
 import { adminDashboardToken } from '@coachio/design-system/admin-dashboard-token';
 import { AdminDashboardSidebar } from './AdminDashboardSidebar';
 import { AdminDiscountsManagement } from './AdminDiscountsManagement';
@@ -13,12 +13,6 @@ import { AdminProductManagement } from '../admin-funnels/AdminProductManagement'
 import { AdminFunnelList } from '../admin-funnels/AdminFunnelList';
 import { AdminLeadsManagement } from '../admin-funnels/AdminLeadsManagement';
 import { AdminBroadcastManagement } from '../admin-broadcast/AdminBroadcastManagement';
-import {
-  AdminGiftManagement,
-  AdminGiftAutomationManagement,
-  AdminGiftCampaignManagement,
-  AdminGiftGrantTracking,
-} from '../admin-gifts';
 import { AdminLuckyDrawManagement } from '../admin-lucky-draw/AdminLuckyDrawManagement';
 import type { AdminDashboardMenuItem } from './types';
 
@@ -33,10 +27,6 @@ const menuItems: AdminDashboardMenuItem[] = [
   { id: 'revenue', label: 'Revenue', group: 'Analytics', path: '/admin/revenue', icon: BarChart3 },
   { id: 'discounts', label: 'Discounts', group: 'System', path: '/admin/discounts', icon: Tag },
   { id: 'broadcasts', label: 'Email Campaigns', group: 'System', path: '/admin/broadcasts', icon: Send },
-  { id: 'gifts', label: 'Gift Packages', group: 'Gifts', path: '/admin/gifts', icon: Gift },
-  { id: 'gift-automations', label: 'Gift Automations', group: 'Gifts', path: '/admin/gift-automations', icon: Zap },
-  { id: 'gift-campaigns', label: 'Gift Campaigns', group: 'Gifts', path: '/admin/gift-campaigns', icon: Send },
-  { id: 'gift-tracking', label: 'Grant Tracking', group: 'Gifts', path: '/admin/gift-tracking', icon: BarChart3 },
   { id: 'media', label: 'Media Library', group: 'System', path: '/admin/media', icon: ImageIcon },
 ];
 
@@ -138,10 +128,6 @@ export function AdminDashboardShell({ initialMenuId }: AdminDashboardShellProps 
           {activeItemId === 'revenue' ? <AdminRevenueTabs /> : null}
           {activeItemId === 'discounts' ? <AdminDiscountsManagement /> : null}
           {activeItemId === 'broadcasts' ? <AdminBroadcastManagement /> : null}
-          {activeItemId === 'gifts' ? <AdminGiftManagement /> : null}
-          {activeItemId === 'gift-automations' ? <AdminGiftAutomationManagement /> : null}
-          {activeItemId === 'gift-campaigns' ? <AdminGiftCampaignManagement /> : null}
-          {activeItemId === 'gift-tracking' ? <AdminGiftGrantTracking /> : null}
           {activeItemId === 'media' ? <AdminMediaManagement /> : null}
         </div>
       </section>

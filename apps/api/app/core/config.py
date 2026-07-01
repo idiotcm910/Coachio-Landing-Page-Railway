@@ -97,13 +97,6 @@ class Settings(BaseSettings):
     BROADCAST_STUCK_TIMEOUT_S: int = 300      # reaper: requeue 'sending' jobs older than this
     BROADCAST_JOB_INTERVAL_SECONDS: int = 5   # worker loop sleep between ticks
 
-    # Gift campaign worker (mechanism 2) — mirrors BROADCAST_* tuning
-    GIFT_BATCH_SIZE: int = 50                  # gift jobs claimed+processed per tick
-    GIFT_RATE_DELAY_MS: int = 200             # throttle sleep between batches (milliseconds)
-    GIFT_MAX_ATTEMPTS: int = 3                # per-job / per-email retry ceiling
-    GIFT_STUCK_TIMEOUT_S: int = 300          # reaper: requeue 'sending' jobs older than this
-    GIFT_JOB_INTERVAL_SECONDS: int = 5       # worker loop sleep between ticks
-
     # Frontend URL
     FRONTEND_URL: str = ""
 

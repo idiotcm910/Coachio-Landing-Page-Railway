@@ -10,5 +10,4 @@ export * from './admin-url-redirects';
 export * from './admin-site-homepage';
 export * from './media';
 export * from './admin-broadcasts';
-export * from './admin-gifts';
 export * from './lucky-events';

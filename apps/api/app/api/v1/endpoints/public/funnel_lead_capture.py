@@ -158,24 +158,6 @@ async def capture_lead(
             headers=_CORS_HEADERS,
         )
 
-    # Gift automations: deliver any active `subscribed`-trigger gifts for a NEW
-    # lead (mechanism 1). No-op when no automation matches. Runs after the lead is
-    # committed so it exists; gift grants are committed below. Never raises.
-    if is_new_lead:
-        from app.services.gift_automation_service import trigger as gift_trigger
-
-        gift_trigger(
-            db,
-            funnel_id=funnel.id,
-            trigger_status="subscribed",
-            email=email_raw,
-            full_name=name,
-            phone=phone,
-            source=f"lead:{lead.id}",
-            background_tasks=background_tasks,
-        )
-        db.commit()
-
     return JSONResponse(
         content={"ok": True},
         headers=_CORS_HEADERS,
