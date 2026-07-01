@@ -12,4 +12,3 @@
 !**/.env.example
 **/*.log
 .DS_Store
-apps/api
