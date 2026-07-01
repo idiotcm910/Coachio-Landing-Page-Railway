@@ -121,7 +121,7 @@ Railway không có object storage/CDN. Dùng **Cloudflare R2** (S3-compatible, f
 
 ## 7. Migration + tạo admin
 - **Migration**: đã tự chạy qua **Pre-Deploy Command** (`alembic upgrade head`) mỗi lần deploy api. Khỏi làm tay.
-- **Tạo admin** (1 lần): mở service `api` → tab **Settings/Deployments → ⋯ → Shell** (hoặc Railway CLI `railway run`), chạy:
+- **Tạo admin** (1 lần): mở service `api` → tab **`Console`** (terminal trong container; service phải đã deploy xanh), chạy:
   ```bash
   python -m app.scripts.create_admin --email ban@email.com --password 'matkhau-manh'
   ```
