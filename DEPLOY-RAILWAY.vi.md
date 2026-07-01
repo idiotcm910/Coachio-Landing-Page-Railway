@@ -40,7 +40,7 @@ Railway deploy từ GitHub. Đẩy repo này lên 1 repo GitHub của bạn (vd 
 Project → **+ Create → GitHub Repo** → chọn repo → đổi **Service Name = `api`** → **Settings**:
 - **Source → Root Directory**: `/` (gốc repo).
 - **Build**: Builder = **Dockerfile**, Dockerfile Path = `apps/api/Dockerfile`.
-- **Deploy → Custom Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+- **Deploy → Custom Start Command**: `sh -c 'uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}'`  *(bọc `sh -c` để Railway shell-expand `$PORT`; nếu không sẽ lỗi "'$PORT' is not a valid integer")*
 - **Deploy → Pre-Deploy Command**: `alembic upgrade head`  *(tự tạo bảng mỗi lần deploy)*
 - **Deploy → Healthcheck Path**: `/api/v1/health`
 - (Tùy chọn) **Watch Paths**: `apps/api/**` *(chỉ rebuild khi code api đổi)*
