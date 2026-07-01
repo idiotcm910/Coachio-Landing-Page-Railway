@@ -49,7 +49,7 @@ def clean_boot(monkeypatch):
     from app.core import config as config_module
     # Blank all optional keys to prove they are not required for boot.
     for attr in (
-        "SEPAY_BANK_NAME", "SEPAY_ACCOUNT_NUMBER", "PREFIX_URL_CALLBACK",
+        "SEPAY_BANK_NAME", "SEPAY_ACCOUNT_NUMBER",
         "RESEND_API_KEY", "RESEND_FROM_EMAIL",
         "STORAGE_ENDPOINT", "STORAGE_BUCKET", "STORAGE_ACCESS_KEY", "STORAGE_SECRET_KEY",
         "STORAGE_PUBLIC_URL",
