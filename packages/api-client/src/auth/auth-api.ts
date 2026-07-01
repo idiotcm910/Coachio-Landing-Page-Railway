@@ -64,7 +64,7 @@ export const authApi = {
     const token = getAccessToken();
     if (!token) return null;
 
-    const response = await apiClient.get<ApiResponse<BackendUser>>('/api/v1/auth/me');
+    const response = await apiClient.get<ApiResponse<BackendUser>>('/api/v1/admin/auth/me');
 
     if (!response.data && response.statusCode === 401) {
       clearAuthTokens();
