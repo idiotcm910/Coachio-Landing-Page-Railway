@@ -69,6 +69,24 @@ run_spin() {
   rm -f "$logf"; return $rc
 }
 
+# run "Label" cmd args...  — chạy lệnh, STREAM output ra màn hình; nếu lỗi thì
+# hiện banner đỏ (label + exit code + lệnh) rồi HỎI bỏ qua/dừng. Dùng cho mọi
+# lệnh CLI để lỗi luôn hiển thị thay vì bị nuốt.
+run() {
+  local label="$1"; shift
+  printf '%s  $ %s%s\n' "$C_DIM" "$*" "$C_RESET"
+  "$@"; local rc=$?
+  if [[ $rc -eq 0 ]]; then ok "$label"; return 0; fi
+  echo
+  err "LỖI (exit $rc): $label"
+  printf '%s    Lệnh: %s%s\n' "$C_DIM" "$*" "$C_RESET"
+  echo
+  if confirm "Bỏ qua lỗi này và tiếp tục"; then
+    warn "Đã bỏ qua — bước sau có thể lỗi theo."; return "$rc"
+  fi
+  die "Dừng vì lỗi ở: $label. Sửa xong chạy lại script."
+}
+
 # ensure_railway_cli: install @railway/cli if missing (with progress)
 ensure_railway_cli() {
   if command -v railway >/dev/null 2>&1; then
@@ -153,8 +171,7 @@ set_api_vars() {
   _rv_add SEPAY_ACCOUNT_NUMBER "$SEPAY_ACCOUNT_NUMBER"
   _rv_add META_DEFAULT_PIXEL_ID "$META_DEFAULT_PIXEL_ID"
   _rv_add META_DEFAULT_CAPI_TOKEN "$META_DEFAULT_CAPI_TOKEN"
-  info "Set ${#_rv[@]} tham số cho service '$svc'..."
-  railway variables --service "$svc" "${_rv[@]}"
+  run "Set ${#_rv[@]} biến cho service '$svc'" railway variables --service "$svc" "${_rv[@]}"
 }
 
 # set_web_vars <web_service_name> <api_service_name>
@@ -164,8 +181,7 @@ set_web_vars() {
   _rv_add API_INTERNAL_URL "https://\${{$api.RAILWAY_PUBLIC_DOMAIN}}"
   local slug; ask slug "NEXT_PUBLIC_DEFAULT_FUNNEL_SLUG (slug funnel cho trang /, Enter bỏ qua)"
   _rv_add NEXT_PUBLIC_DEFAULT_FUNNEL_SLUG "$slug"
-  info "Set ${#_rv[@]} tham số cho service '$web'..."
-  railway variables --service "$web" "${_rv[@]}"
+  run "Set ${#_rv[@]} biến cho service '$web'" railway variables --service "$web" "${_rv[@]}"
 }
 
 print_admin_hint() {

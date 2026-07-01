@@ -49,29 +49,31 @@ confirm "Thêm plugin PostgreSQL" && { railway add --database postgres || warn "
 up_service() {
   local svc="$1" dir="$2"
   step "Tạo + deploy service '$svc' (từ $dir/)"
-  info "Chạy 'railway up' trong $dir/ (tạo service nếu chưa có)."
-  if confirm "Deploy '$svc' bây giờ"; then
-    ( cd "$ROOT/$dir" && railway up --service "$svc" ) \
-      && ok "Đã bắt đầu deploy '$svc'." \
-      || warn "railway up cho '$svc' lỗi. Fallback: mở Settings service '$svc' → Build → Dockerfile Path = '$dir/Dockerfile', Root Directory = '/', rồi chạy lại 'cd $dir && railway up --service $svc'."
-  fi
+  confirm "Tạo + deploy service '$svc'" || return 0
+  # railway up --service X KHÔNG tự tạo service → phải tạo trước.
+  run "Tạo service '$svc'" railway add --service "$svc"
+  ( cd "$ROOT/$dir" && run "Deploy '$svc' (railway up)" railway up --service "$svc" ) \
+    || warn "Nếu build sai Dockerfile: Settings service '$svc' → Build → Dockerfile Path = '$dir/Dockerfile', Root Directory = '/', rồi 'cd $dir && railway up --service $svc'."
 }
 
 up_service api apps/api
 up_service web apps/web
 
 step "Set biến môi trường"
-confirm "Set biến cho service 'api'" && { set_api_vars api web && ok "Đã set biến api." || err "Set biến api lỗi."; }
-confirm "Set biến cho service 'web'" && { set_web_vars web api && ok "Đã set biến web." || err "Set biến web lỗi."; }
+confirm "Set biến cho service 'api'" && set_api_vars api web
+confirm "Set biến cho service 'web'" && set_web_vars web api
 
 step "Tạo domain public"
 confirm "Generate domain cho 'api' và 'web'" && {
-  railway domain --service api || warn "Không tạo được domain api."
-  railway domain --service web || warn "Không tạo được domain web."
+  run "Domain cho 'api'" railway domain --service api
+  run "Domain cho 'web'" railway domain --service web
 }
 
 step "Redeploy để nạp biến mới"
-confirm "Redeploy 'api' và 'web' (nạp env vừa set)" && { railway redeploy --service api; railway redeploy --service web; }
+confirm "Redeploy 'api' và 'web' (nạp env vừa set)" && {
+  run "Redeploy 'api'" railway redeploy --service api
+  run "Redeploy 'web'" railway redeploy --service web
+}
 
 print_admin_hint
 cat <<EOF

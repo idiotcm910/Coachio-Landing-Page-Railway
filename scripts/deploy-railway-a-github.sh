@@ -57,19 +57,22 @@ EOF
 read -r -p "$(printf '%sTạo xong 2 service tên đúng ''api'' và ''web'' → nhấn Enter để tiếp...%s' "$C_YELLOW" "$C_RESET")" _
 
 step "Set biến môi trường (tự động qua CLI)"
-confirm "Set biến cho service 'api'" && { set_api_vars api web && ok "Đã set biến api." || err "Set biến api lỗi — kiểm tra tên service."; }
-confirm "Set biến cho service 'web'" && { set_web_vars web api && ok "Đã set biến web." || err "Set biến web lỗi."; }
+confirm "Set biến cho service 'api'" && set_api_vars api web
+confirm "Set biến cho service 'web'" && set_web_vars web api
 
 step "Tạo domain public"
 confirm "Generate domain cho 'api' và 'web'" && {
-  railway domain --service api || warn "Không tạo được domain api (có thể đã có)."
-  railway domain --service web || warn "Không tạo được domain web (có thể đã có)."
+  run "Domain cho 'api'" railway domain --service api
+  run "Domain cho 'web'" railway domain --service web
 }
 
 step "Deploy"
 info "Các service GitHub sẽ tự deploy khi có commit. Muốn ép deploy ngay:"
 echo "    railway redeploy --service api   &&   railway redeploy --service web"
-confirm "Ép redeploy ngay bây giờ" && { railway redeploy --service api; railway redeploy --service web; }
+confirm "Ép redeploy ngay bây giờ" && {
+  run "Redeploy 'api'" railway redeploy --service api
+  run "Redeploy 'web'" railway redeploy --service web
+}
 
 print_admin_hint
 echo; ok "Xong luồng A. Kiểm tra: <api-domain>/api/v1/health → 200, rồi vào <web-domain>/admin."
