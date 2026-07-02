@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, ChevronDown, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { ArrowLeft, ChevronDown, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import type { AdminDashboardMenuItem } from './types';
 
 interface AdminDashboardSidebarProps {
@@ -9,6 +9,7 @@ interface AdminDashboardSidebarProps {
   activeItemId: string;
   onSelectItem: (itemId: string) => void;
   onBackToHome: () => void;
+  onLogout: () => void;
   onCollapsedChange?: (collapsed: boolean) => void;
 }
 
@@ -17,6 +18,7 @@ export function AdminDashboardSidebar({
   activeItemId,
   onSelectItem,
   onBackToHome,
+  onLogout,
   onCollapsedChange,
 }: AdminDashboardSidebarProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -149,7 +151,7 @@ export function AdminDashboardSidebar({
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-[var(--coachio-admin-dashboard-border-subtle)] p-2">
+      <div className="border-t border-[var(--coachio-admin-dashboard-border-subtle)] p-2 space-y-0.5">
         <button
           type="button"
           onClick={onBackToHome}
@@ -159,6 +161,16 @@ export function AdminDashboardSidebar({
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
           {!sidebarCollapsed && <span>Back to home</span>}
+        </button>
+        <button
+          type="button"
+          onClick={onLogout}
+          title="Đăng xuất"
+          aria-label="Đăng xuất"
+          className={`flex w-full items-center gap-2.5 rounded-[var(--coachio-admin-dashboard-radius-md)] px-2 py-2.5 text-sm font-semibold text-[var(--coachio-admin-dashboard-danger-text,#dc2626)] transition hover:bg-[var(--coachio-admin-dashboard-danger-bg,#fee2e2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--coachio-admin-dashboard-accent)] ${sidebarCollapsed ? 'justify-center' : ''}`}
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          {!sidebarCollapsed && <span>Đăng xuất</span>}
         </button>
       </div>
     </aside>

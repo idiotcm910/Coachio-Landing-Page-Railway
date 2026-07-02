@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, BarChart3, Dice5, Filter, Home, Image as ImageIcon, Package, ReceiptText, Send, Tag, Users, Waypoints } from 'lucide-react';
+import { ArrowLeft, BarChart3, Dice5, Filter, Home, Image as ImageIcon, LogOut, Package, ReceiptText, Send, Tag, Users, Waypoints } from 'lucide-react';
 import { adminDashboardToken } from '@coachio/design-system/admin-dashboard-token';
+import { useAuth } from '@coachio/api-client';
 import { AdminDashboardSidebar } from './AdminDashboardSidebar';
 import { AdminDiscountsManagement } from './AdminDiscountsManagement';
 import { AdminMediaManagement } from './AdminMediaManagement';
@@ -44,6 +45,13 @@ interface AdminDashboardShellProps {
 
 export function AdminDashboardShell({ initialMenuId }: AdminDashboardShellProps = {}) {
   const router = useRouter();
+  const { logout } = useAuth();
+
+  // Log out then send the user to the admin login page.
+  const handleLogout = () => {
+    logout();
+    router.replace('/admin/login');
+  };
   // The active menu is driven by the route (each menu has its own page passing initialMenuId),
   // so the selection survives a refresh and is shareable. Falls back to the default menu.
   const activeItem =
@@ -76,6 +84,7 @@ export function AdminDashboardShell({ initialMenuId }: AdminDashboardShellProps 
         activeItemId={activeItemId}
         onSelectItem={handleSelectItem}
         onBackToHome={() => router.push('/')}
+        onLogout={handleLogout}
         onCollapsedChange={setSidebarCollapsed}
       />
 
@@ -94,6 +103,15 @@ export function AdminDashboardShell({ initialMenuId }: AdminDashboardShellProps 
               aria-label="Back to home"
             >
               <ArrowLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-[var(--coachio-admin-dashboard-radius-sm)] border border-[var(--coachio-admin-dashboard-danger-border,#fecaca)] bg-[var(--coachio-admin-dashboard-surface)] text-[var(--coachio-admin-dashboard-danger-text,#dc2626)]"
+              aria-label="Đăng xuất"
+              title="Đăng xuất"
+            >
+              <LogOut className="h-5 w-5" />
             </button>
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1">
