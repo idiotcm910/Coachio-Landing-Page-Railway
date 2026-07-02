@@ -25,7 +25,6 @@ RAILWAY_ONLY=(
   "apps/api/app/api/v1/endpoints/health.py"
   "apps/api/tests/test_cache_backend.py"
   "apps/web/app/api/health"
-  "docs/railway-template.md"
   "scripts/sync-from-upstream.sh"
   "README.md"
 )
@@ -54,7 +53,7 @@ may have changed them and overwritten the Railway tweaks; re-apply if needed):
   - apps/api/app/api/v1/router.py         (mounts /health)
   - apps/api/main.py                       (init cache backend at startup)
   - apps/api/Dockerfile / apps/web/Dockerfile  ($PORT / HOSTNAME binding)
-  - README.vi.md                           (if you keep the VI readme in sync)
+  - README.md                              (tiếng Việt, tuỳ biến cho Railway)
 
 Commit only after reviewing.
 NOTE
