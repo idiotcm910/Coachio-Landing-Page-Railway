@@ -12,10 +12,11 @@ Credit-package and course-order routing intentionally excluded — not part of t
 import logging
 import re
 
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.db.base import get_db
 from app.models.funnel_order import FunnelOrder
 from app.services.funnel_order_service import FunnelOrderService
@@ -26,6 +27,20 @@ router = APIRouter()
 
 # SEP + exactly 10 digits — canonical funnel order_code format
 _ORDER_CODE_RE = re.compile(r"SEP\d{10}")
+
+
+def verify_sepay_webhook(authorization: str | None = Header(default=None)) -> None:
+    """Reject the call unless Authorization matches SEPAY_WEBHOOK_API_KEY.
+
+    SePay dashboard: Webhooks → (Add webhook) → Bảo mật → Authorization, format
+    "Apikey <value>" — set the same <value> as SEPAY_WEBHOOK_API_KEY. Check is
+    skipped entirely (no-op) when SEPAY_WEBHOOK_API_KEY is unset, so existing
+    deployments without a key keep working until they opt in.
+    """
+    if not settings.SEPAY_WEBHOOK_API_KEY:
+        return
+    if authorization != f"Apikey {settings.SEPAY_WEBHOOK_API_KEY}":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid webhook authorization")
 
 
 class SepayWebhookPayload(BaseModel):
@@ -43,7 +58,7 @@ class SepayWebhookPayload(BaseModel):
     id: int
 
 
-@router.post("/sepay-payment")
+@router.post("/sepay-payment", dependencies=[Depends(verify_sepay_webhook)])
 async def sepay_payment_webhook(
     payload: SepayWebhookPayload,
     background_tasks: BackgroundTasks,

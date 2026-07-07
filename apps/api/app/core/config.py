@@ -68,6 +68,9 @@ class Settings(BaseSettings):
     # SePay Payment
     SEPAY_BANK_NAME: str = ""
     SEPAY_ACCOUNT_NUMBER: str = ""
+    # Value SePay sends in the webhook's Authorization header (dashboard: Webhooks → Bảo mật).
+    # Empty = no check (not recommended). Set the same value on both sides.
+    SEPAY_WEBHOOK_API_KEY: str = ""
 
     # Resend
     RESEND_API_KEY: str = ""
