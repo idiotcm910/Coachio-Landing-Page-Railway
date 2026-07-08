@@ -165,12 +165,12 @@ export function AdminDashboardSidebar({
         <button
           type="button"
           onClick={onLogout}
-          title="Đăng xuất"
-          aria-label="Đăng xuất"
+          title="Log out"
+          aria-label="Log out"
           className={`flex w-full items-center gap-2.5 rounded-[var(--coachio-admin-dashboard-radius-md)] px-2 py-2.5 text-sm font-semibold text-[var(--coachio-admin-dashboard-danger-text,#dc2626)] transition hover:bg-[var(--coachio-admin-dashboard-danger-bg,#fee2e2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--coachio-admin-dashboard-accent)] ${sidebarCollapsed ? 'justify-center' : ''}`}
         >
           <LogOut className="h-4 w-4 shrink-0" />
-          {!sidebarCollapsed && <span>Đăng xuất</span>}
+          {!sidebarCollapsed && <span>Log out</span>}
         </button>
       </div>
     </aside>

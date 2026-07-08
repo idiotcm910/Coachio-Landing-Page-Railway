@@ -19,10 +19,10 @@ export default function AdminLoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      toast.success('Đăng nhập thành công');
+      toast.success('Signed in successfully');
       router.replace('/admin');
     } catch {
-      toast.error('Email hoặc mật khẩu không đúng');
+      toast.error('Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
           </p>
           <h1 className="mt-1 text-2xl font-semibold">System Admin</h1>
           <p className="mt-1 text-sm text-[var(--coachio-admin-dashboard-text-muted)]">
-            Đăng nhập để quản lý hệ thống
+            Sign in to manage the system
           </p>
         </div>
 
@@ -64,14 +64,14 @@ export default function AdminLoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="ban@email.com"
+              placeholder="you@email.com"
               className={inputCls}
             />
           </div>
 
           <div className="space-y-1.5">
             <label htmlFor="password" className="text-sm font-medium">
-              Mật khẩu
+              Password
             </label>
             <input
               id="password"
@@ -90,12 +90,12 @@ export default function AdminLoginPage() {
             disabled={loading}
             className="w-full rounded-[var(--coachio-admin-dashboard-radius-sm)] bg-[var(--coachio-admin-dashboard-accent)] px-3 py-2.5 text-sm font-semibold text-[var(--coachio-admin-dashboard-text-inverse)] shadow-[var(--coachio-admin-dashboard-shadow-sm)] transition hover:bg-[var(--coachio-admin-dashboard-accent-hover)] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
         <p className="mt-4 text-center text-xs text-[var(--coachio-admin-dashboard-text-soft)]">
-          Chỉ dành cho quản trị viên được cấp quyền.
+          For authorized administrators only.
         </p>
       </div>
     </main>

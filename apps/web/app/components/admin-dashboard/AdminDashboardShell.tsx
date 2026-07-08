@@ -108,8 +108,8 @@ export function AdminDashboardShell({ initialMenuId }: AdminDashboardShellProps 
               type="button"
               onClick={handleLogout}
               className="grid h-10 w-10 shrink-0 place-items-center rounded-[var(--coachio-admin-dashboard-radius-sm)] border border-[var(--coachio-admin-dashboard-danger-border,#fecaca)] bg-[var(--coachio-admin-dashboard-surface)] text-[var(--coachio-admin-dashboard-danger-text,#dc2626)]"
-              aria-label="Đăng xuất"
-              title="Đăng xuất"
+              aria-label="Log out"
+              title="Log out"
             >
               <LogOut className="h-5 w-5" />
             </button>
