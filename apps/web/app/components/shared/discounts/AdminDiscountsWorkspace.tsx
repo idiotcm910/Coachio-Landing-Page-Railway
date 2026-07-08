@@ -19,8 +19,8 @@ import {
 import { useToast } from '../toast';
 
 const DISCOUNT_TYPE_LABELS: Record<DiscountType, string> = {
-  percent: 'Phần trăm (%)',
-  fixed: 'Cố định (VND)',
+  percent: 'Percentage (%)',
+  fixed: 'Fixed (VND)',
 };
 
 interface AdminDiscountsWorkspaceProps {
@@ -43,7 +43,7 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
     adminDiscountsApi
       .list({ ownerType, ownerId })
       .then((data) => { if (mounted) setDiscounts(data); })
-      .catch((e) => { if (mounted) setError(getApiErrorMessage(e, 'Không tải được danh sách mã giảm giá')); })
+      .catch((e) => { if (mounted) setError(getApiErrorMessage(e, 'Failed to load discount codes')); })
       .finally(() => { if (mounted) setIsLoading(false); });
     return () => { mounted = false; };
   }, [ownerType, ownerId]);
@@ -66,15 +66,15 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
       if (d.is_default_for_owner) {
         await adminDiscountsApi.unsetDefault(d.id, { ownerType, ownerId });
         setDiscounts((prev) => prev.map((x) => (x.id === d.id ? { ...x, is_default_for_owner: false } : x)));
-        success(`Đã bỏ đặt mặc định cho ${ownerLabel} này`);
+        success(`Unset as default for this ${ownerLabel}`);
       } else {
         await adminDiscountsApi.setDefault(d.id, { ownerType, ownerId });
         // One default at a time per owner — clear the flag on the others.
         setDiscounts((prev) => prev.map((x) => ({ ...x, is_default_for_owner: x.id === d.id })));
-        success(`Đã đặt làm mã mặc định cho ${ownerLabel} này`);
+        success(`Set as default for this ${ownerLabel}`);
       }
     } catch (e) {
-      toastError(getApiErrorMessage(e, 'Không cập nhật được mặc định'));
+      toastError(getApiErrorMessage(e, 'Failed to update default'));
     } finally {
       setTogglingKey(null);
     }
@@ -93,7 +93,7 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
               : x,
           ),
         );
-        success(`Đã gỡ giới hạn áp riêng cho ${ownerLabel} này`);
+        success(`Removed the restriction to this ${ownerLabel}`);
       } else {
         await adminDiscountsApi.addScope(d.id, { ownerType, ownerId });
         setDiscounts((prev) =>
@@ -103,10 +103,10 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
               : x,
           ),
         );
-        success(`Đã giới hạn mã chỉ áp cho ${ownerLabel} này`);
+        success(`Restricted this code to this ${ownerLabel}`);
       }
     } catch (e) {
-      toastError(getApiErrorMessage(e, 'Không cập nhật được phạm vi áp dụng'));
+      toastError(getApiErrorMessage(e, 'Failed to update the scope'));
     } finally {
       setTogglingKey(null);
     }
@@ -116,10 +116,11 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-base font-semibold text-[var(--coachio-admin-dashboard-text)]">Mã giảm giá</h3>
+          <h3 className="text-base font-semibold text-[var(--coachio-admin-dashboard-text)]">Discount codes</h3>
           <p className="mt-0.5 max-w-xl text-xs text-[var(--coachio-admin-dashboard-text-muted)]">
-            Mã giảm giá là kho dùng chung. Tại đây chỉ hiển thị mã đã được áp cho {ownerLabel} này; bạn có thể hủy việc
-            áp (bỏ mặc định / gỡ giới hạn áp riêng). Để tạo, sửa hoặc xóa mã, mở trang quản lý mã giảm giá.
+            Discount codes are a shared pool. This view only shows codes already applied to this {ownerLabel}; you can
+            cancel the application (unset default / remove the restriction). To create, edit, or delete codes, open the
+            discount manager.
           </p>
         </div>
         <a
@@ -129,14 +130,14 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
           className="inline-flex h-9 items-center gap-2 rounded-[var(--coachio-admin-dashboard-radius-sm)] border border-[var(--coachio-admin-dashboard-border)] px-4 text-sm font-semibold text-[var(--coachio-admin-dashboard-text)] hover:border-[var(--coachio-admin-dashboard-accent)] hover:text-[var(--coachio-admin-dashboard-accent)]"
         >
           <ExternalLink className="h-4 w-4" />
-          Quản lý mã giảm giá
+          Manage discount codes
         </a>
       </div>
 
       {isLoading && (
         <div className="flex items-center gap-3 text-sm text-[var(--coachio-admin-dashboard-text-muted)]">
           <Loader2 className="h-5 w-5 animate-spin text-[var(--coachio-admin-dashboard-accent)]" />
-          Đang tải...
+          Loading...
         </div>
       )}
 
@@ -149,12 +150,12 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
       {!isLoading && !error && (
         <div className="overflow-hidden rounded-[var(--coachio-admin-dashboard-radius-lg)] border border-[var(--coachio-admin-dashboard-border)] bg-[var(--coachio-admin-dashboard-surface)] shadow-[var(--coachio-admin-dashboard-shadow-sm)]">
           <div className="hidden grid-cols-[minmax(120px,1.3fr)_minmax(0,1fr)_110px_70px_150px_160px] gap-3 border-b border-[var(--coachio-admin-dashboard-border)] bg-[var(--coachio-admin-dashboard-surface-muted)] px-4 py-3 text-xs font-semibold uppercase tracking-wide text-[var(--coachio-admin-dashboard-text-soft)] md:grid">
-            <span>Mã</span><span>Loại</span><span>Giá trị</span><span>Đã dùng</span><span>Mặc định</span><span>Áp riêng</span>
+            <span>Code</span><span>Type</span><span>Value</span><span>Redeemed</span><span>Default</span><span>Restricted</span>
           </div>
           {applied.length === 0 ? (
             <div className="flex flex-col items-center gap-2 px-4 py-12 text-center text-sm text-[var(--coachio-admin-dashboard-text-muted)]">
               <Tag className="h-8 w-8 opacity-40" />
-              Chưa có mã giảm giá nào được áp cho {ownerLabel} này.
+              No discount codes applied to this {ownerLabel} yet.
             </div>
           ) : applied.map((d) => {
             const scoped = isScopedToOwner(d);
@@ -172,7 +173,7 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
                 {/* Default-for-owner toggle */}
                 <button
                   type="button"
-                  title={d.is_default_for_owner ? `Bỏ mặc định cho ${ownerLabel} này` : `Đặt mặc định cho ${ownerLabel} này`}
+                  title={d.is_default_for_owner ? `Unset as default for this ${ownerLabel}` : `Set as default for this ${ownerLabel}`}
                   onClick={() => handleToggleDefault(d)}
                   disabled={isTogglingDefault}
                   className={`inline-flex h-7 w-fit items-center justify-center gap-1.5 whitespace-nowrap rounded-[var(--coachio-admin-dashboard-radius-sm)] px-2.5 text-xs font-semibold transition disabled:opacity-50 ${
@@ -184,13 +185,13 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
                   {isTogglingDefault
                     ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
                     : <Star className={`h-3.5 w-3.5 shrink-0 ${d.is_default_for_owner ? 'fill-current' : ''}`} />}
-                  <span>{d.is_default_for_owner ? 'Mặc định' : 'Đặt mặc định'}</span>
+                  <span>{d.is_default_for_owner ? 'Default' : 'Set as default'}</span>
                 </button>
 
                 {/* Scope (restrict-to-owner) toggle */}
                 <button
                   type="button"
-                  title={scoped ? `Gỡ giới hạn áp riêng cho ${ownerLabel} này` : `Giới hạn chỉ áp cho ${ownerLabel} này`}
+                  title={scoped ? `Remove the restriction to this ${ownerLabel}` : `Restrict this code to this ${ownerLabel}`}
                   onClick={() => handleToggleScope(d)}
                   disabled={isTogglingScope}
                   className={`inline-flex h-7 w-fit items-center justify-center gap-1.5 whitespace-nowrap rounded-[var(--coachio-admin-dashboard-radius-sm)] px-2.5 text-xs font-semibold transition disabled:opacity-50 ${
@@ -202,7 +203,7 @@ export function AdminDiscountsWorkspace({ ownerType, ownerId }: AdminDiscountsWo
                   {isTogglingScope
                     ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
                     : <Target className="h-3.5 w-3.5 shrink-0" />}
-                  <span>{scoped ? 'Áp riêng' : 'Giới hạn riêng'}</span>
+                  <span>{scoped ? 'Restricted' : 'Restrict'}</span>
                 </button>
               </div>
             );
