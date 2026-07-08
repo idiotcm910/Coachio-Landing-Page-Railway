@@ -4,6 +4,8 @@
 
 Nền tảng funnel & landing page mã nguồn mở: xây dựng landing page, thu thập lead, bán sản phẩm số với thanh toán SePay/VietQR, gửi email giao dịch và broadcast, chạy chương trình giảm giá, sự kiện vòng quay may mắn và đọc analytics funnel — tất cả trong một ứng dụng admin. FastAPI + Next.js, giấy phép MIT.
 
+> 📘 **Hướng dẫn triển khai chi tiết (ebook, có hình minh hoạ từng bước):** [Xem cách deploy lên Railway tại đây](https://drive.google.com/file/d/1bFs49us_MqSofjcSK0JTXAsqOzY5OWxZ/view?usp=sharing) — từ đẩy source lên GitHub, cấu hình R2/Resend/SePay, đến deploy và demo tính năng.
+
 ---
 
 ## Mục lục
@@ -601,6 +603,8 @@ Runbook E2E kiểm tra luồng chính, 2 cách chạy:
 ---
 
 ## 13. Triển khai & lưu ý
+
+> Muốn deploy lên Railway theo từng bước có hình minh hoạ? Xem [ebook hướng dẫn triển khai](https://drive.google.com/file/d/1bFs49us_MqSofjcSK0JTXAsqOzY5OWxZ/view?usp=sharing).
 
 ### Docker build
 
