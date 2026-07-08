@@ -120,7 +120,7 @@ export function MediaPicker({ isOpen, onClose, onSelect, kind, selectLabel }: Me
           <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
             className="inline-flex h-9 items-center gap-2 rounded-[var(--coachio-admin-dashboard-radius-sm)] bg-[var(--coachio-admin-dashboard-accent)] px-3 text-sm font-semibold text-[var(--coachio-admin-dashboard-text-inverse)] disabled:opacity-50">
             {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
-            {uploading ? `Đang tải ${progress.done}/${progress.total}` : 'Tải lên'}
+            {uploading ? `Uploading ${progress.done}/${progress.total}` : 'Upload'}
           </button>
           <input ref={fileInputRef} type="file" accept={MEDIA_UPLOAD_ACCEPT} multiple hidden onChange={onFileChange} />
           <button type="button" onClick={onClose} title="Close"
@@ -135,7 +135,7 @@ export function MediaPicker({ isOpen, onClose, onSelect, kind, selectLabel }: Me
             {isDragging && (
               <div className="pointer-events-none absolute inset-2 z-10 flex flex-col items-center justify-center gap-2 rounded-[var(--coachio-admin-dashboard-radius-md)] border-2 border-dashed border-[var(--coachio-admin-dashboard-accent)] bg-[var(--coachio-admin-dashboard-surface)]/90 text-sm font-semibold text-[var(--coachio-admin-dashboard-accent)]">
                 <UploadCloud className="h-7 w-7" />
-                Thả file vào đây để tải lên
+                Drop files here to upload
               </div>
             )}
             {loading ? (
@@ -145,7 +145,7 @@ export function MediaPicker({ isOpen, onClose, onSelect, kind, selectLabel }: Me
             ) : items.length === 0 ? (
               <div className="flex h-40 flex-col items-center justify-center gap-2 text-sm text-[var(--coachio-admin-dashboard-text-muted)]">
                 <ImagePlus className="h-8 w-8 opacity-40" />
-                Chưa có media. Kéo-thả, dán (Ctrl+V) hoặc bấm Tải lên — có thể chọn nhiều file.
+                No media yet. Drag-and-drop, paste (Ctrl+V), or click Upload — you can select multiple files.
               </div>
             ) : (
               <div className="columns-2 gap-3 sm:columns-3 md:columns-4 [&>*]:mb-3">
