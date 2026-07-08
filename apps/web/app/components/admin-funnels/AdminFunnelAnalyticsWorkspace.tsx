@@ -61,7 +61,7 @@ function LeadStatusSection({ leads }: { leads: FunnelLeadsSummary }) {
   }> = [
     {
       key: 'subscribed',
-      label: 'Đăng ký (subscribed)',
+      label: 'Subscribed',
       icon: UserPlus,
       count: leads.subscribed,
       chip: 'bg-[var(--coachio-admin-dashboard-accent-soft)] text-[var(--coachio-admin-dashboard-accent)]',
@@ -69,7 +69,7 @@ function LeadStatusSection({ leads }: { leads: FunnelLeadsSummary }) {
     },
     {
       key: 'lead',
-      label: 'Vào checkout (lead)',
+      label: 'Reached checkout (lead)',
       icon: UserCheck,
       count: leads.lead,
       chip: 'bg-[var(--coachio-admin-dashboard-neutral-bg)] text-[var(--coachio-admin-dashboard-neutral-text)]',
@@ -77,7 +77,7 @@ function LeadStatusSection({ leads }: { leads: FunnelLeadsSummary }) {
     },
     {
       key: 'purchased',
-      label: 'Đã mua (purchased)',
+      label: 'Purchased',
       icon: ShoppingBag,
       count: leads.purchased,
       chip: 'bg-[var(--coachio-admin-dashboard-success-bg)] text-[var(--coachio-admin-dashboard-success-text)]',
@@ -90,10 +90,10 @@ function LeadStatusSection({ leads }: { leads: FunnelLeadsSummary }) {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-[var(--coachio-admin-dashboard-accent)]" />
-          <h3 className="text-sm font-bold text-[var(--coachio-admin-dashboard-text)]">Leads theo trạng thái</h3>
+          <h3 className="text-sm font-bold text-[var(--coachio-admin-dashboard-text)]">Leads by status</h3>
         </div>
         <span className="text-xs text-[var(--coachio-admin-dashboard-text-muted)]">
-          Tổng <strong className="text-[var(--coachio-admin-dashboard-text)]">{total.toLocaleString('vi-VN')}</strong> leads
+          Total <strong className="text-[var(--coachio-admin-dashboard-text)]">{total.toLocaleString('en-US')}</strong> leads
         </span>
       </div>
 
@@ -104,9 +104,9 @@ function LeadStatusSection({ leads }: { leads: FunnelLeadsSummary }) {
               <div>
                 <p className="text-xs font-medium text-[var(--coachio-admin-dashboard-text-muted)]">{c.label}</p>
                 <strong className="mt-2 block text-2xl font-bold text-[var(--coachio-admin-dashboard-text)]">
-                  {c.count.toLocaleString('vi-VN')}
+                  {c.count.toLocaleString('en-US')}
                 </strong>
-                <p className="mt-0.5 text-xs text-[var(--coachio-admin-dashboard-text-soft)]">{pct(c.count)}% tổng leads</p>
+                <p className="mt-0.5 text-xs text-[var(--coachio-admin-dashboard-text-soft)]">{pct(c.count)}% of total leads</p>
               </div>
               <div className={`grid h-10 w-10 place-items-center rounded-[var(--coachio-admin-dashboard-radius-sm)] ${c.chip}`}>
                 <c.icon className="h-5 w-5" />
@@ -234,8 +234,8 @@ export function AdminFunnelAnalyticsWorkspace({ funnelId }: AdminFunnelAnalytics
             {PAGE_ROWS.map((row) => (
               <div key={row.key} className="grid grid-cols-[minmax(0,1fr)_100px_120px] border-b border-[var(--coachio-admin-dashboard-border-subtle)] px-5 py-3 last:border-b-0">
                 <span className="text-sm font-semibold text-[var(--coachio-admin-dashboard-text)]">{row.label}</span>
-                <span className="text-right text-sm text-[var(--coachio-admin-dashboard-text)]">{views[row.key].toLocaleString('vi-VN')}</span>
-                <span className="text-right text-sm text-[var(--coachio-admin-dashboard-text-muted)]">{visitors[row.key].toLocaleString('vi-VN')}</span>
+                <span className="text-right text-sm text-[var(--coachio-admin-dashboard-text)]">{views[row.key].toLocaleString('en-US')}</span>
+                <span className="text-right text-sm text-[var(--coachio-admin-dashboard-text-muted)]">{visitors[row.key].toLocaleString('en-US')}</span>
               </div>
             ))}
           </div>
